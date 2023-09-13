@@ -1,0 +1,93 @@
+#goorm_inner_layout_bottom {
+    box-sizing: border-box;
+}
+
+ul#south_tab.nav_tabs {
+    background-color: #2F3336;
+
+}
+
+#south_tab {
+    border-top: 2px solid #1c1414;
+    flex-wrap: nowrap;
+    min-height: 48px;
+    margin-bottom: -1px;
+}
+#south_tab > li {
+    width: fit-content;
+    z-index: 99;
+    border-right: solid 1px;   
+}
+
+#south_tab > li > a.active {
+    background-color: #141617;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top: solid 2px #609AE2;
+    height: 100%;
+}
+#south_tab > li > a {
+    color: #D7DAE0;
+    padding: 0px 40px 0 40px;
+    z-index: 0;
+    border-bottom: none;
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 21px;
+    display: flex;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    height: 100%;
+}
+
+#south_tab .tab_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: fit-content;
+    -webkit-box-flex: 1;
+    flex: 1;
+}
+
+#south_tab #south_tab_close_btn {
+    color: #CED0DA;
+    z-index: 99;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 0.875rem;
+}
+
+#south_tab > button {
+    width: 24px;
+    height: 24px;
+    padding: 3px;
+    background: transparent;
+    border: none;
+    position: absolute;
+    right: 1px;
+    outline: none;
+    box-shadow: none;
+}
+
+.nav_tabs {
+    border-bottom: 0;
+    text-align: center;
+}
+
+.nav {
+    padding-left: 0;
+    list-style: none;
+}
+
+ul {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
