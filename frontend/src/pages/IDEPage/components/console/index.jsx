@@ -12,7 +12,7 @@ const index = () => {
   return (
     <div
       id="goorm_inner_layout_bottom"
-      className="bg-[#141617] overflow-hidden"
+      className="bg-[#0E1525] overflow-hidden"
       style={{
         display: "block",
         justifyContent: "space-between",
