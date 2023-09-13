@@ -3,12 +3,12 @@
 }
 
 ul#south_tab.nav_tabs {
-    background-color: #2F3336;
+    background-color: #1D2332;
 
 }
 
 #south_tab {
-    border-top: 2px solid #1c1414;
+    border-top: 1px solid #0E1525;
     flex-wrap: nowrap;
     min-height: 48px;
     margin-bottom: -1px;
@@ -20,14 +20,14 @@ ul#south_tab.nav_tabs {
 }
 
 #south_tab > li > a.active {
-    background-color: #141617;
+    background-color: #2C3243;
     padding-top: 0;
     padding-bottom: 0;
     border-top: solid 2px #609AE2;
     height: 100%;
 }
 #south_tab > li > a {
-    color: #D7DAE0;
+    color: #C3C8CC;
     padding: 0px 40px 0 40px;
     z-index: 0;
     border-bottom: none;
