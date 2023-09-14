@@ -57,9 +57,9 @@ public class FileController {
 
     @Data
     static class FileRequest {
-        @NotEmpty
+        @NotBlank
         private final String name;
-        @NotEmpty
+        @NotBlank
         private final String ext;
         private final String content;
     }
