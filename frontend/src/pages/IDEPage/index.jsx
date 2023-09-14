@@ -1,4 +1,4 @@
-import React from "react";
+
 import Chatroom from "./components/chatroom";
 import Console from "./components/console";
 import Editor from "./components/editor";
@@ -11,7 +11,7 @@ const index = () => {
     <div className="flex flex-col h-full">
       <Header />
       <div className="flex flex-row h-full">
-        <div className="flex flex-col w-1/4">
+        <div className="flex flex-row w-1/4">
           <Sidebar />
           <FileExplorer />
         </div>
