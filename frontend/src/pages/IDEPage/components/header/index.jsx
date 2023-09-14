@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "./components/Button";
+import ExeButton from "./components/ExeButton";
 import ProfileBadge from "./components/ProfileBadge";
 
 const index = () => {
+  const [running, setRunning] = useState(false);
+
   return (
     <header className="flex justify-between py-2 px-4 bg-[#0F1524]">
       <div className="flex w-1/3">
-      <ProfileBadge />
+        <ProfileBadge />
       </div>
       <div className="flex w-1/5 justify-center">
-        <button className="bg-[#1E4919] hover:bg-green-300 rounded-md py-1 px-3 text-[#CCFDCE]">
-          Run
-        </button>
+        <ExeButton
+          running={running}
+          toggleRunning={() => setRunning(!running)}
+        />
       </div>
       <div className="flex w-1/3 justify-end gap-6">
         <Button name="+Invite" />
