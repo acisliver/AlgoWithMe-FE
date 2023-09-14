@@ -12,15 +12,16 @@ const index = () => {
         <ProfileBadge />
       </div>
       <div className="flex w-1/5 justify-center">
-        <ExeButton
-          running={running}
-          toggleRunning={() => setRunning(!running)}
-        />
+
       </div>
       <div className="flex w-1/3 justify-end gap-6">
         <Button name="+Invite" />
         <Button name="+Fork" />
         <Button name="+Share" />
+        <ExeButton
+          running={running}
+          toggleRunning={() => setRunning(!running)}
+        />
       </div>
     </header>
   );
