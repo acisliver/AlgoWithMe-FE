@@ -7,14 +7,23 @@ import Header from "./components/header";
 import Sidebar from "./components/sidebar";
 
 const index = () => {
-  return (<div>
-    <Header />
-    <Sidebar />
-    <FileExplorer />
-    <Editor />
-    <Console />
-    <Chatroom />
-  </div>)
+  return (
+    <div className="flex flex-col h-full">
+      <Header />
+      <div className="flex flex-row h-full">
+        <div className="flex flex-col w-1/4">
+          <Sidebar />
+          <FileExplorer />
+        </div>
+        <div className="flex flex-col w-3/4">
+          <Editor />
+          <Console />
+        </div>
+      </div>
+      <Chatroom />
+    </div>
+  );
 };
 
 export default index;
+
