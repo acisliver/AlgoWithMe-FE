@@ -1,6 +1,5 @@
 package com.nakaligoba.backend.entity;
 
-import com.nakaligoba.backend.domain.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
