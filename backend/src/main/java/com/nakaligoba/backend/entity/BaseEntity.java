@@ -1,4 +1,4 @@
-package com.nakaligoba.backend.domain;
+package com.nakaligoba.backend.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,6 +1,6 @@
 package com.nakaligoba.backend.service;
 
-import com.nakaligoba.backend.entitiy.FileEntity;
+import com.nakaligoba.backend.entity.FileEntity;
 import com.nakaligoba.backend.repository.FileRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
