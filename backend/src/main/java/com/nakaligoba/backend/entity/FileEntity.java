@@ -1,4 +1,4 @@
-package com.nakaligoba.backend.entitiy;
+package com.nakaligoba.backend.entity;
 
 import com.nakaligoba.backend.domain.BaseEntity;
 import lombok.AccessLevel;
