@@ -17,10 +17,14 @@ public class FileEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "ext", nullable = false)
     private String ext;
 
     @Lob
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Builder
