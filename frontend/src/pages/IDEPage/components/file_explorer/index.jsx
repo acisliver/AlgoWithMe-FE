@@ -9,28 +9,23 @@ import {DiCss3} from 'react-icons/di';
 
 export default function Explorer({ selectedTab }) {
   const [searchValue, setSearchValue] = useState("");
-  const [tree,setTree] = useState([ 
-    {key: '0-0',
-      title: 'Node1', type : 'folder',
-      children: [
-        { key: '0-0-0', title: 'index.html', type: 'html' },
-        { key: '0-0-1', title: 'script.js' , type : 'js' },
-        { key: '0-0-2', title: 'style.css',type : 'css' },
-      ]
-    },
-    {
-          key: '0-1',
-          title: 'Node2', type : 'folder' ,
-          children: [
-            { key: '0-1-0', title: 'Child Node3' },
-            { key: '0-1-1', title: 'Child Node4' },
-          ],
-        },
-    
-      ]);
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
- 
+  const [tree,setTree] = useState([ 
+    {
+      key: "0-1",
+      title: "root",
+      type : 'folder',
+      children: []
+    },
+    {key: '0-2',
+      title: 'Node1', type : 'folder',
+      children: [
+        { key: '0-2-1', title: 'index.html', type: 'html' }
+      ]
+    },
+      ]);
+  const [selectedFolderKey, setSelectedFolderKey] = useState(null);
 
 
   const searchChange = (e) => {
@@ -42,15 +37,19 @@ const toggleinput =() =>{
   setShowInput(prev => !prev)
 }
 
-
-  const determineFileType = (filename) => {
-    if (filename.endsWith('.js')) return 'js';
-    if (filename.endsWith('.css')) return 'css';
-    if (filename.endsWith('.html')) return 'html';
-   
+  const determineFileType = (fileName) => {
+    if (fileName.endsWith('.js')) return 'js';
+    if (fileName.endsWith('.css')) return 'css';
+    if (fileName.endsWith('.html')) return 'html';
     return 'unknown'; 
   }
+
   const switcherIcon = (obj) => {
+    if(obj.type === "folder"){
+      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+    </svg>
+    }
     if(obj.isLeaf){
       switch(obj.type){
         case "html" :
@@ -70,7 +69,6 @@ const toggleinput =() =>{
     return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
   </svg>
-  
        } else { 
       return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
@@ -78,24 +76,67 @@ const toggleinput =() =>{
     }
   };
   
-  const createFile = (filename) => {
-    const fileType = determineFileType(filename);
+  const onFolderClick = (key) => {
+    setSelectedFolderKey(key);
+      console.log("key", key);
+  }
+
+  const createFile = (fileName) => {
+    const fileType = determineFileType(fileName);
     const newFile = {
-      key: 0-Date.now(),
-      title: filename,
+      key: selectedFolderKey ? `${selectedFolderKey}-${Date.now()}` : `${Date.now()}`,
+      title: fileName,
       type: fileType,
     };
-    setTree(tree=>tree.concat(newFile));
-  }
+
+    console.log("Creating file:", newFile); 
+    if (!selectedFolderKey) {
+      setTree(prevData => [...prevData, newFile]);
+  } else {
+    setTree(prevData => 
+      prevData.map(node => 
+        node.key === selectedFolderKey ? 
+          { ...node, children: [...node.children, newFile] } : 
+          node
+      )
+    );
+      }
+      toggleinput();
+}
+  
+// const createFolder = (folderName) => {
+//   const newFolder = {
+//     key: `${selectedFolderKey}-${Date.now()}`,
+//     title: folderName,
+//     type: 'folder',
+//     children: []
+//   };
+
+//   console.log("Creating folder:", newFolder); 
+
+
+//   if (!selectedFolderKey || !tree.find(node => node.key === selectedFolderKey)) {
+//     setTree(prevData => [...prevData, newFolder]);
+//   } else {
+//     setTree(prevData => 
+//       prevData.map(node => 
+//         node.key === selectedFolderKey ? 
+//           { ...node, children: [...node.children, newFolder] } : 
+//           node
+//       )
+//     );
+//   }
+// }
+
 
   const treeSubmit =(e) =>{
+    console.log("treeSubmit called");
     e.preventDefault();
-    createFile(value)
+      createFile(value)
     setValue("")
-
   }
-
   
+
   if(selectedTab === 'tabFiles'){
   return (
     <div style={{maxWidth : '180px'}}>
@@ -110,7 +151,7 @@ const toggleinput =() =>{
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
 </svg>
 </button>
-<button className='hover:bg-[#1C2333] rounded-lg' >
+<button className='hover:bg-[#1C2333] rounded-lg' onClick={toggleinput}  >
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mx-1">
   <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
 </svg>
@@ -118,17 +159,18 @@ const toggleinput =() =>{
 </div>
       </div>
       
-
-
       <div  className='bg-[#0E1525] text-white text-sm leading-3 pl-2 '> 
       <Tree
-      defaultExpandedKeys={['0-0']}  
+      // defaultExpandedKeys={['0-0']}  
       treeData={tree}
       showIcon={false}
       defaultExpandAll={false}
-      // selectable={false}
       switcherIcon={switcherIcon}
-    />
+      draggable ={true}
+      onSelect={(selectedKeys) => {
+      onFolderClick(selectedKeys[0]);
+      }}
+        />
 
       {showInput && (
           <form className=' bg-[#0E1525]' onSubmit={treeSubmit}>
@@ -140,8 +182,6 @@ const toggleinput =() =>{
             />
           </form>
         )}
-
-    
     </div>
     </div>
   );
