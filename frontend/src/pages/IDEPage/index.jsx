@@ -17,6 +17,8 @@ const index = () => {
         </div>
         <div className="flex flex-col w-3/4">
           <Editor />
+        </div>
+        <div className="">
           <Console />
         </div>
       </div>
@@ -26,4 +28,3 @@ const index = () => {
 };
 
 export default index;
-

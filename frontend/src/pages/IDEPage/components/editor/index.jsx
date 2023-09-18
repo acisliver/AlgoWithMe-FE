@@ -1,13 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import Tab from "./components/Tab";
+import "./index.css";
 
-const index = () => {
+const Index = () => {
+  const [activeTab, setActiveTab] = useState("file1");
+  const [tabs, setTabs] = useState(["file1", "file2", "file3"]);
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
+  const handleCloseTab = (tabToClose) => {
+    setTabs(tabs.filter((tab) => tab !== tabToClose));
+    if (activeTab === tabToClose) {
+      setActiveTab(tabs[0]);
+    }
+  };
+
   return (
-    <div className="bg-[#1D2332] border border-[#2C3243] rounded">
-      <div className="text-white">file list</div>
-      <div>editor</div>
-      <div>Ln 7, col 41 History</div>
+    <div
+      id="inner_layout_top"
+      className="bg-[#0E1525] overflow-hidden"
+    >
+      <ul id="north_tab" className="nav nav_tabs" style={{ display: "flex" }}>
+        {tabs.map((tab, index) => (
+          <Tab
+            key={index}
+            isActive={activeTab === tab}
+            label={tab}
+            onClick={() => handleTabClick(tab)}
+            onClose={() => handleCloseTab(tab)}
+          />
+        ))}
+      </ul>
+      <div className="text-white">{activeTab} 내용 </div>
     </div>
   );
 };
 
-export default index;
+export default Index;

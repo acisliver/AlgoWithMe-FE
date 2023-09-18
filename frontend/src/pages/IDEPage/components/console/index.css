@@ -1,10 +1,10 @@
-#goorm_inner_layout_bottom {
+#inner_layout_bottom {
   box-sizing: border-box;
   display: block;
   justify-content: space-between;
   position: absolute;
   margin: 0px;
-  inset: auto 0px 0px 20vw;
+  inset: auto 0px 0px 25vw;
   width: auto;
   z-index: 10;
   height: 382px;
@@ -17,6 +17,7 @@ ul#south_tab.nav_tabs {
 
 #south_tab {
   border-top: 1px solid #0e1525;
+  border-left: 1px solid #0e1525;
   flex-wrap: nowrap;
   min-height: 48px;
   margin-bottom: -1px;

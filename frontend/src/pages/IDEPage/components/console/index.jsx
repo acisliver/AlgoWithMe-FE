@@ -12,8 +12,8 @@ const index = () => {
 
   return (
     <div
-      id="goorm_inner_layout_bottom"
-      className="bg-[#0E1525] overflow-hidden"
+      id="inner_layout_bottom"
+      className="bg-[rgb(14,21,37)] overflow-hidden"
     >
       <ul id="south_tab" className="nav nav_tabs " style={{ display: "flex" }}>
         <Tab
