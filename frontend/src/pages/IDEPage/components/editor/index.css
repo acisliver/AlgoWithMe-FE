@@ -1,0 +1,40 @@
+#inner_layout_top {
+  box-sizing: border-box;
+  display: block;
+  justify-content: space-between;
+  margin: 3px;
+  width: auto;
+  height: 100vh;
+  visibility: visible;
+}
+
+ul#north_tab.nav_tabs {
+    background-color: #1d2332;
+  }
+
+  #north_tab {
+    border-top: 1px solid #0e1525;
+    border-left: 1px solid #0e1525;
+    flex-wrap: nowrap;
+    min-height: 48px;
+    margin-bottom: -1px;
+  }
+
+
+#north_tab > li > a:hover {
+  background-color: #2c3243;
+  opacity: 0.5;
+}
+
+#north_tab #north_tab_close_btn {
+  z-index: 99;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  margin-top: -2px;
+}
+
+#north_tab > li {
+    border-right: solid 1px;
+    cursor: pointer;
+  }
