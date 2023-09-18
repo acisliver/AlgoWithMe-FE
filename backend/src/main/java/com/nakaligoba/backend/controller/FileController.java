@@ -1,6 +1,7 @@
 package com.nakaligoba.backend.controller;
 
 import com.nakaligoba.backend.service.FileService;
+import com.nakaligoba.backend.service.RunFileService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import com.nakaligoba.backend.service.FileService.*;
@@ -12,10 +13,11 @@ import javax.validation.constraints.NotBlank;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/api/v1/file")
 public class FileController {
 
     private final FileService fileService;
+    private final RunFileService dockerService;
 
     @GetMapping("/{id}")
     public ResponseEntity<FileDto> getFile(@PathVariable Long id) {
@@ -49,10 +51,14 @@ public class FileController {
         return ResponseEntity.ok(updatedFileDto);
     }
 
-    @PostMapping("/{id}/run")
-    public ResponseEntity<String> runFile(@PathVariable Long id) {
-        String result = fileService.runCode(id);
-        return ResponseEntity.ok(result);
+    @GetMapping("/{id}/run")
+    public ResponseEntity<RunResponse> runFile(
+            @PathVariable Long id,
+            @RequestParam String language
+    ) {
+        String result = dockerService.run(id, language);
+        RunResponse response = new RunResponse(result);
+        return ResponseEntity.ok(response);
     }
 
     @Data
@@ -62,5 +68,10 @@ public class FileController {
         @NotBlank
         private final String ext;
         private final String content;
+    }
+
+    @Data
+    static class RunResponse {
+        private final String message;
     }
 }
