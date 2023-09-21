@@ -1,0 +1,297 @@
+openapi: 3.0.3
+info:
+  title: Web IDE
+  description: Web IDE
+  version: 1.0.1
+servers:
+  - url: 'http://localhost:8080/api'
+paths:
+  /v1/auth/signin:
+    post:
+      summary: 로그인
+      description: 이메일과 비밀번호로 로그인
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 이메일
+                password:
+                  type: string
+                  description: 비밀번호
+      responses:
+        '200':
+          description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: 인증 토큰
+        '401':
+          description: 로그인 실패
+  /v1/auth/signup:
+    post:
+      summary: 회원가입
+      description: '이메일, 비밀번호로 회원가입'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 이메일
+                password:
+                  type: string
+                  description: 비밀번호
+                name:
+                  type: String
+                  description: 이름
+      responses:
+        '200':
+          description: 회원가입 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: 인증 토큰
+        '401':
+          description: 회원가입 실패
+  /v1/projects:
+    post:
+      summary: 프로젝트 생성
+      description: 프로젝트 생성
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 이름
+                description:
+                  type: string
+                  description: 설명
+                template:
+                  type: string
+                  description: 실행 환경 템플릿
+      responses:
+        '200':
+          description: 프로젝트 생성 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 프로젝트 식별자
+                  s3Id:
+                    type: string
+                    description: S3 버킷 이름
+                  s3ObjectId:
+                    type: string
+                    description: S3 버킷 내 프로젝트 식별자
+    get:
+      summary: 프로젝트 목록 보기
+      description: 사용자가 소유하거나 수정할 수 있는 프로젝트 목록 보기
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+      responses:
+        '200':
+          description: 프로젝트 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 이름
+                  description:
+                    type: string
+                    description: 설명
+                  updatedAt:
+                    type: date
+                    description: 수정일
+                  collaborators:
+                    type: array
+                    description: 협업자 리스트
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: 회원 식별자
+                        name:
+                          type: string
+                          description: 회원 이름
+  '/v1/projects/{id}':
+    put:
+      summary: 프로젝트 수정
+      description: 프로젝트 수정
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: 프로젝트 식별자
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 이름
+                description:
+                  type: string
+                  description: 설명
+      responses:
+        '200':
+          description: 프로젝트 수정 성공
+    delete:
+      summary: 프로젝트 삭제
+      description: 프로젝트 아이디로 삭제
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: 프로젝트 식별자
+      responses:
+        '200':
+          description: 프로젝트 삭제 성공
+  '/v1/projects/{id}/run':
+    get:
+      summary: 프로젝트 실행
+      description: 프로젝트 식별자로 실행
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: 프로젝트 식별자
+      responses:
+        '200':
+          description: 프로젝트 실행 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    description: 프로젝트 실행 결과
+                  type:
+                    type: string
+                    description: 프로젝트 실행 성공 실패 여부
+  '/v1/projects/{id}/invite':
+    post:
+      summary: 프로젝트에 사용자 초대
+      description: 프로젝트에 사용자의 이메일로 수정 권한 부여
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: 프로젝트 식별자
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 사용자 이메일
+      responses:
+        '200':
+          description: 성공
+  '/v1/projects/{id}/save':
+    put:
+      summary: 프로젝트 저장
+      description: 프로젝트 저장
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: 자격 증명
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: 프로젝트 식별자
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                s3Bucket:
+                  type: string
+                  description: S3 버킷 이름
+                objectId:
+                  type: string
+                  description: S3 내 오브젝트 식별자
+                content:
+                  type: string
+                  description: 코드 내용
+      responses:
+        '200':
+          description: 성공
