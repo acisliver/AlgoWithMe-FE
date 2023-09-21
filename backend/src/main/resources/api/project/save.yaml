@@ -1,0 +1,34 @@
+put:
+  summary: 프로젝트 저장
+  description: 프로젝트 저장
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+      required: true
+      description: 자격 증명
+    - in: path
+      name: id
+      schema:
+        type: number
+      required: true
+      description: 프로젝트 식별자
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            s3Bucket:
+              type: string
+              description: S3 버킷 이름
+            objectId:
+              type: string
+              description: S3 내 오브젝트 식별자
+            content:
+              type: string
+              description: 코드 내용
+  responses:
+    '200':
+      description: 성공

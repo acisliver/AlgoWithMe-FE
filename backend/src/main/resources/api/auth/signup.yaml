@@ -13,6 +13,9 @@ post:
             password:
               type: string
               description: 비밀번호
+            name:
+              type: String
+              description: 이름
   responses:
     '200':
       description: 회원가입 성공
@@ -21,7 +24,7 @@ post:
           schema:
             type: object
             properties:
-              access-token:
+              accessToken:
                 type: string
                 description: 인증 토큰
     '401':

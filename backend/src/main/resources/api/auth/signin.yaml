@@ -21,7 +21,7 @@ post:
           schema:
             type: object
             properties:
-              access-token:
+              accessToken:
                 type: string
                 description: 인증 토큰
     '401':
