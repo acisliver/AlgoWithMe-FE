@@ -9,8 +9,6 @@ import Contextmenu from './Contextmenu';
 import { useContextMenu } from 'react-contexify'
 // import Filesearch from './filesearch';
 
-
-
 const INTIIAL_TREE = [
   {
     key: "0-1",
@@ -187,7 +185,7 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
     const fileType = determineFileType(newValue);
     return tree.map((node) => {
       if (node.key === targetKey) {
-        return { ...node, title: newValue,type: newType === 'folder' ? 'folder' : fileType, };
+        return { ...node, title: newValue,type: newType === 'folder' ? 'folder' : fileType };
       }
       if (node.children) {
         return { ...node, children: updateNodeRecursive(node.children, targetKey, newValue) };
@@ -211,15 +209,32 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
     return node.title;
   };
   
-//   const handleDelete = (item) => 
-//     console.log(item)
-//   };
+  const handleDelete = () => {
+    return setTree(prevTree => deleteNodeRecursive(prevTree, editingKey));
+  }
+
+  const deleteNodeRecursive =(tree,targetKey)=>{
+   let updatedTree = tree.filter(node => node.key !== targetKey);
+
+   updatedTree = updatedTree.map(node => {
+     if (node.children) {
+       return {
+         ...node,
+         children: deleteNodeRecursive(node.children, targetKey),
+       };
+     }
+     return node;
+   })
+   return updatedTree;
+  
+  }
+
 
   if(selectedTab === 'tabFiles'){
   return (
-    <div style={{width : '168px'}}>
+    <div style={{width : '200px', border: '0.5px solid black'}} className='bg-[#0E1525]  text-white '>
       {/* <Filesearch searchChange={searchChange} searchValue={searchValue}/> */}
-      <div className='bg-[#0E1525] text-white flex justify-between font-medium pl-1 pr-2 pt-1'>
+      <div className=' flex justify-between font-medium pl-1 pr-2 pt-1'>
         Files
         <div className='flex '>
           <button className='hover:bg-[#1C2333] rounded-lg' onClick={()=>{toggleinput();setCreatingItemType('file');}} >
@@ -248,12 +263,12 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
       onRightClick={handleOncontextMenu}
       titleRender={renderTreeNode}
     />
-    <Contextmenu setEditing={setEditing}  />
+    <Contextmenu setEditing={setEditing} handleDelete={handleDelete} />
 
       {showInput && (
           <form className=' bg-[#0E1525]' onSubmit={treeSubmit}>
             <input 
-              className='bg-[#1D2332] hover:bg-[#2B3245] h-8 rounded-md  my-0.5 placeholder:pl-2 text-white' 
+              className='bg-[#1D2332] focus:outline-none hover:bg-[#2B3245] h-8 rounded-md  my-0.5 placeholder:pl-2 text-white' 
               placeholder='Filename' 
               value={value} 
               onChange={(e) => setValue(e.target.value)}

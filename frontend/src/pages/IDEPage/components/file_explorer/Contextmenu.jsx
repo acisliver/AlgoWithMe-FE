@@ -5,13 +5,13 @@ import {GoPencil}  from 'react-icons/go'
 import {RiDeleteBinLine} from 'react-icons/ri' 
 
 
-export default function Contextmenu({setEditing}) {
+export default function Contextmenu({setEditing, handleDelete}) {
 
   return (
     <Menu id="menu-id" >
    <Item onClick={() => setEditing(true)}><GoPencil size='21' className="pr-2"/>Rename</Item>
       <Separator/>
-      <Item onClick={() => alert('삭제 클릭!')}><RiDeleteBinLine size='22' color="#c22424" className="pr-2" />Delete</Item>
+      <Item onClick={handleDelete}><RiDeleteBinLine size='22' color="#c22424" className="pr-2" />Delete</Item>
     </Menu>
   )
 }
