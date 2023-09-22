@@ -1,7 +1,10 @@
 package com.nakaligoba.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -9,6 +12,7 @@ import javax.persistence.*;
 @Table(name = "members")
 @NoArgsConstructor
 @Getter
+@Setter
 public class MemberEntity extends BaseEntity {
 
     @Id
@@ -23,7 +27,4 @@ public class MemberEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "salt", nullable = false)
-    private String salt;
 }
