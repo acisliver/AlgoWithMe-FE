@@ -7,6 +7,8 @@ import {BiLogoJavascript, BiLogoPython, BiLogoJava } from 'react-icons/bi';
 import {DiCss3} from 'react-icons/di';
 import Contextmenu from './Contextmenu';
 import { useContextMenu } from 'react-contexify'
+import TabSettings from './TabSettings';
+import Form from './Form';
 // import Filesearch from './filesearch';
 
 const INTIIAL_TREE = [
@@ -26,7 +28,8 @@ const INTIIAL_TREE = [
   }
 ];
 
-const menu_id = 'abfddf'
+
+
 export default function Explorer({ selectedTab }) {
 //   const [searchValue, setSearchValue] = useState("");
   const [showInput,setShowInput] = useState(false);
@@ -35,10 +38,9 @@ export default function Explorer({ selectedTab }) {
   const [selectedFolderKey, setSelectedFolderKey] = useState(null);
   const [creatingItemType, setCreatingItemType] = useState(null);
   const [editingKey, setEditingKey] = useState(null);
-  const [editingValue, setEditingValue] = useState('');  // 편집 중인 값
+  const [editingValue, setEditingValue] = useState(''); 
   const [editingType, setEditingType] = useState(null);
   const [editing, setEditing] = useState(false);
-
 
 //   const searchChange = (e) => {setSearchValue(e.target.value);}
   const toggleinput =() =>{
@@ -81,7 +83,6 @@ export default function Explorer({ selectedTab }) {
         return  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#F5F9FC" className="w-4 h-4">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
       </svg>
-      
       }
     }
   };
@@ -97,7 +98,6 @@ export default function Explorer({ selectedTab }) {
       title: fileName,
       type: fileType,
     };
-
     console.log("Creating file:", newFile); 
     if (!selectedFolderKey) {
       setTree(prevData => [...prevData, newFile]);
@@ -107,48 +107,42 @@ export default function Explorer({ selectedTab }) {
       toggleinput();
     }
 
-
-const createFolder = (folderName) => {
-  const newFolder = {
+  const createFolder = (folderName) => {
+    const newFolder = {
     key: selectedFolderKey ? `${selectedFolderKey}-${Date.now()}` : `${Date.now()}`,
     title: folderName,
     type: 'folder',
     children: []
   };
-
   console.log("Creating folder:", newFolder); 
-  
-  if (!selectedFolderKey) {
+    if (!selectedFolderKey) {
     setTree(prevData => [...prevData, newFolder]);
   } else {
     setTree(prevData => 
       addNodeRecursive(prevData, selectedFolderKey, newFolder));
   }
-  toggleinput();
+    toggleinput();
 }
 
-
-
-const addNodeRecursive = (tree, targetKey, newNode) => {
-  return tree.map(node => {
-    if (node.key === targetKey) {
-      return {
-        ...node,
-        children: [...node.children, newNode],
-      };
-    }
+  const addNodeRecursive = (tree, targetKey, newNode) => {
+    return tree.map(node => {
+      if (node.key === targetKey) {
+        return {
+          ...node,
+          children: [...node.children, newNode],
+        };
+     }
     if (node.children) {
       return {
         ...node,
         children: addNodeRecursive(node.children, targetKey, newNode),
       };
     }
-    return node;
-  });
-};
+      return node;
+    }); 
+  };
 
   const treeSubmit =(e) =>{
-    console.log("treeSubmit called");
     e.preventDefault();
     if (creatingItemType === 'file') {
       createFile(value);
@@ -158,11 +152,12 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
     setValue("")
   }
 
+  const menu_id = 'contextmenu1'
   const { show } = useContextMenu({
     id: menu_id
   });
 
-  const handleOncontextMenu = ({ event,node })=>{
+  const handlecontextMenu = ({ event,node })=>{
     show({ id: "menu-id", event }) ;
     setEditingValue(node.title);
     setEditingType(node.type);
@@ -178,9 +173,6 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
     setEditing(false);
   };
   
-
-
- 
   const updateNodeRecursive = (tree, targetKey, newValue, newType) => {
     const fileType = determineFileType(newValue);
     return tree.map((node) => {
@@ -194,12 +186,11 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
     });
   };
 
-
   const renderTreeNode = (node) => {
     if (node.key === editingKey && editing) {
       return (
         <form onSubmit={handleEditSubmit}>
-          <input  className=' bg-[#0E1525] text-white w-20'
+          <input  className=' bg-[#0E1525] text-white'
             value={editingValue}
             onChange={(e) => setEditingValue(e.target.value)}
           />
@@ -220,13 +211,12 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
      if (node.children) {
        return {
          ...node,
-         children: deleteNodeRecursive(node.children, targetKey),
+         children: deleteNodeRecursive(node.children, targetKey)
        };
      }
      return node;
    })
    return updatedTree;
-  
   }
 
 
@@ -252,39 +242,35 @@ const addNodeRecursive = (tree, targetKey, newNode) => {
       
       <div  className='bg-[#0E1525] text-white text-sm leading-3 pl-2 '> 
       <Tree
-      treeData={tree}
-      showIcon={false}
-      defaultExpandAll={true}
-      switcherIcon={switcherIcon}
-      draggable ={true}
-      onSelect={(selectedKeys) => {
-      onFolderClick(selectedKeys[0]);
-      }}
-      onRightClick={handleOncontextMenu}
-      titleRender={renderTreeNode}
-    />
-    <Contextmenu setEditing={setEditing} handleDelete={handleDelete} />
-
-      {showInput && (
-          <form className=' bg-[#0E1525]' onSubmit={treeSubmit}>
-            <input 
-              className='bg-[#1D2332] focus:outline-none hover:bg-[#2B3245] h-8 rounded-md  my-0.5 placeholder:pl-2 text-white' 
-              placeholder='Filename' 
-              value={value} 
-              onChange={(e) => setValue(e.target.value)}
-            />
-          </form>
-        )}
-    </div>
+        treeData={tree}
+        showIcon={false}
+        defaultExpandAll={true}
+        switcherIcon={switcherIcon}
+        draggable ={true}
+        onSelect={(selectedKeys) => {
+        onFolderClick(selectedKeys[0]);
+       }}
+        onRightClick={handlecontextMenu}
+        titleRender={renderTreeNode}
+      />
+      <Contextmenu 
+        setEditing={setEditing} 
+        handleDelete={handleDelete}
+      />
+      <Form 
+        showInput={showInput} 
+        value={value} 
+        setValue={setValue} 
+        treeSubmit={treeSubmit}
+      />
+      </div>
     </div>
   );
   
-} else if (selectedTab === 'tabSearch') {
+} else if (selectedTab === 'tabSetting') {
   // tabSearch'를 클릭
   return (
-    <div>
-      {/* Search 관련 내용 */}
-    </div>
+   <TabSettings/>
   );
 }
 }
