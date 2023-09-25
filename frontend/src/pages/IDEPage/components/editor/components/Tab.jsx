@@ -1,8 +1,10 @@
-import React from "react";
+import React from 'react';
+
 import CloseButton from "./CloseButton";
 
 const Tab = ({ isActive, label, onClick, onClose }) => {
   return (
+
     <li className="w-auto border-r border-gray-700 relative mt-1.5 mb-0.5 ml-2 ">
       <a
         onClick={onClick}

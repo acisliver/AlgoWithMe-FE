@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import Tab from "./components/Tab";
 import "./index.css";
@@ -20,9 +21,11 @@ const Index = () => {
     "index9.jsx",
     "index0.jsx",
   ]);
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
 
   //닫기 버튼
   const handleCloseTab = (tabToClose) => {
@@ -60,6 +63,7 @@ const Index = () => {
         className="nav nav_tabs"
         style={{ display: "flex" }}
       >
+
         {tabs.map((tab, index) => (
           <Tab
             key={index}
