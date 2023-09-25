@@ -11,11 +11,12 @@ CREATE TABLE `members`
 
 CREATE TABLE `projects`
 (
-    `id`           BIGINT       NOT NULL,
-    `name`         VARCHAR(255) NOT NULL,
-    `description`  VARCHAR(255) NOT NULL,
-    `created_at`   DATETIME     NOT NULL,
-    `updated_at`   DATETIME     NOT NULL,
+    `id`          BIGINT       NOT NULL,
+    `name`        VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NOT NULL,
+    `storage_key` VARCHAR(255) NOT NULL,
+    `created_at`  DATETIME     NOT NULL,
+    `updated_at`  DATETIME     NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -41,6 +42,14 @@ CREATE TABLE `chat_messages`
     PRIMARY KEY (`id`)
 );
 
+CREATE TABLE `files`
+(
+    `id`              BIGINT       NOT NULL,
+    `storage_file_id` VARCHAR(255) NOT NULL,
+    `project_id`      BIGINT       NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
 ALTER TABLE `member_projects`
     ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`);
 
@@ -52,3 +61,6 @@ ALTER TABLE `chat_messages`
 
 ALTER TABLE `chat_messages`
     ADD FOREIGN KEY (`member_id`) REFERENCES members (`id`);
+
+ALTER TABLE `files`
+    ADD FOREIGN KEY (`project_id`) REFERENCES projects(`id`);
