@@ -1,5 +1,6 @@
 package com.nakaligoba.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class ProjectEntity extends BaseEntity {
     private String description;
 
     // ToDo: S3 식별자 필요
+
+    @Builder
+    public ProjectEntity(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }
