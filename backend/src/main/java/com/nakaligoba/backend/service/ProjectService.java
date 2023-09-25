@@ -77,7 +77,7 @@ public class ProjectService {
 
     @Data
     @Builder
-    public class ProjectListResponse {
+    public static class ProjectListResponse {
         private String name;
         private String description;
         private LocalDateTime updatedAt;
