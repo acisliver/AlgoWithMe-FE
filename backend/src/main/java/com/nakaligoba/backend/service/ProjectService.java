@@ -2,6 +2,7 @@ package com.nakaligoba.backend.service;
 
 import com.nakaligoba.backend.entity.ProjectEntity;
 import com.nakaligoba.backend.repository.ProjectRepository;
+import com.nakaligoba.backend.controller.ProjectController.*;
 import lombok.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,38 +57,5 @@ public class ProjectService {
                         ))
                         .build())
                 .collect(Collectors.toList());
-    }
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ProjectCreateRequest {
-        private String name;
-        private String description;
-        private String template;
-    }
-
-    @Data
-    @Builder
-    public static class ProjectCreateResponse {
-        private Long id;
-        private String storageId;
-    }
-
-    @Data
-    @Builder
-    public static class ProjectListResponse {
-        private String name;
-        private String description;
-        private LocalDateTime updatedAt;
-        private List<CollaboratorResponse> collaborators;
-    }
-
-    @Data
-    @Builder
-    public static class CollaboratorResponse {
-        private Long id;
-        private String name;
     }
 }
