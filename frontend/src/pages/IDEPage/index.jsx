@@ -1,4 +1,3 @@
-
 import Chatroom from "./components/chatroom";
 import Console from "./components/console";
 import Editor from "./components/editor";
@@ -15,10 +14,8 @@ const index = () => {
           <Sidebar />
           <FileExplorer />
         </div>
-        <div className="flex flex-col w-3/4">
+        <div className="flex flex-col w-3/4 h-full">
           <Editor />
-        </div>
-        <div className="">
           <Console />
         </div>
       </div>
