@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "./components/Button";
 import ExeButton from "./components/ExeButton";
-import ProfileBadge from "./components/ProfileBadge";
+import ProfileBadge from "../../../../components/ProfileBadge";
 import ProjectTitleButton from "./components/ProjectTitleButton";
 
 const index = () => {
