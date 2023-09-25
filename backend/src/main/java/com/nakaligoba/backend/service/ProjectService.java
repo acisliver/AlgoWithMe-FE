@@ -20,7 +20,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectCreateResponse create(ProjectCreateRequest request) {
-        if (projectRepository.existsByProjectName(request.getName())) {
+        if (projectRepository.existsByName(request.getName())) {
             throw new IllegalArgumentException("프로젝트명이 중복되었습니다.");
         }
 
