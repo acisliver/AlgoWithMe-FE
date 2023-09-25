@@ -18,5 +18,5 @@ paths:
     $ref: './project/run.yaml'
   /v1/projects/{id}/invite:
     $ref: './project/invite.yaml'
-  /v1/projects/{id}/save:
+  /v1/projects/{projectId}/files/{fileId}:
     $ref: './project/save.yaml'
