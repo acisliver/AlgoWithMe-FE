@@ -2,9 +2,9 @@
   box-sizing: border-box;
   display: block;
   justify-content: space-between;
-  margin: 3px;
+  margin: 0px;
   width: auto;
-  height: 100vh;
+  height: 60%;
   visibility: visible;
   box-sizing: content-box;
 }
