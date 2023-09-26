@@ -2,7 +2,7 @@ import React from "react";
 
 const index = () => {
   return (
-    <div className="text-white">
+    <div className="text-black">
       <span>로그인</span>
     </div>
   );

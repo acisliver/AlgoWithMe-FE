@@ -1,8 +1,13 @@
+import LogIn from "./components/login";
+import SignUp from "./components/signup";
 import React from 'react'
 
 const index = () => {
   return (
-    <div>index</div>
+    <div>
+      <LogIn />
+      <SignUp />
+    </div>
   )
 }
 

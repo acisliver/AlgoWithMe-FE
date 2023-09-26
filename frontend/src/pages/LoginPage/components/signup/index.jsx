@@ -2,7 +2,9 @@ import React from 'react'
 
 const index = () => {
   return (
-    <div>signup</div>
+    <div className="text-black">
+      회원가입
+    </div>
   )
 }
 
