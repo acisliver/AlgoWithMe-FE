@@ -2,11 +2,9 @@
   box-sizing: border-box;
   display: block;
   justify-content: space-between;
-  position: absolute;
   margin: 0px;
-  inset: auto 0px 0px 25vw;
   width: auto;
-  height: 382px;
+  height: 40%;
   visibility: visible;
 }
 
