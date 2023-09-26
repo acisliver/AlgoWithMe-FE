@@ -4,8 +4,9 @@ import ExeButton from "./components/ExeButton";
 import ProfileBadge from "../../../../components/ProfileBadge";
 import ProjectTitleButton from "./components/ProjectTitleButton";
 
-const index = () => {
+const index = (props) => {
   const [running, setRunning] = useState(false);
+
 
   const onExecute = async () => {
     setRunning((prev) => !prev);
@@ -35,7 +36,7 @@ const index = () => {
         <ProfileBadge />
       </div>
       <div className="flex w-1/5 justify-center">
-        <ProjectTitleButton />
+        <ProjectTitleButton onProjectClick={props.onProjClick}/>
       </div>
       <div className="flex w-1/3 justify-end gap-6">
         <Button name="Invite" />
