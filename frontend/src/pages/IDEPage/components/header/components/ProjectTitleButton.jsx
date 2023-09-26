@@ -1,8 +1,12 @@
 import React from "react";
 
-const ProjectTitleButton = () => {
+const ProjectTitleButton = (props) => {
+
+
   return (
-    <button className="flex items-center bg-[#BDBDBD] rounded-xl py-2 px-2">
+    <button onClick={() => {
+        props.onProjectClick(true);
+    }} className="flex items-center bg-[#BDBDBD] rounded-xl py-2 px-2">
       <img
         src="src/assets/view-list.svg"
         alt="view list icon"
