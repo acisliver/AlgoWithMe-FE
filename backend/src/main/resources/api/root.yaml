@@ -20,3 +20,41 @@ paths:
     $ref: './project/invite.yaml'
   /v1/projects/{projectId}/files/{fileId}:
     $ref: './project/save.yaml'
+
+components:
+  schemas:
+    Node:
+      type: object
+      properties:
+        id:
+          type: number
+          description: 파일 및 폴더 식별자
+        key:
+          type: number
+          description: 파일 및 폴더 계층 구조
+          example: "0-1"
+        title:
+          type: string
+          description: 파일 및 폴더 제목
+        type:
+          type: string
+          description: 파일 및 폴더 구분자
+          enum: [folder, file]
+        content:
+          type: string
+          description: 파일 내용
+        children:
+          type: array
+          description: 하위 파일 및 폴더 정보
+          items:
+            $ref: '#/components/schemas/Node'
+
+    FileAndFolderStructure:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+
+
