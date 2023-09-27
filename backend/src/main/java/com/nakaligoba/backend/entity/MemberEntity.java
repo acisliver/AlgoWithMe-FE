@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Table(name = "members")
 @NoArgsConstructor
 @Getter
-@Setter
 public class MemberEntity extends BaseEntity {
 
     @Id
@@ -27,4 +26,11 @@ public class MemberEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Builder
+    public MemberEntity(String email, String password, String name) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+    }
 }

@@ -29,10 +29,11 @@ public class MemberService {
             throw new IllegalArgumentException("이미 등록된 이메일입니다.");
         }
 
-        MemberEntity memberEntity = new MemberEntity();
-        memberEntity.setEmail(memberDto.email);
-        memberEntity.setPassword(passwordEncoder.encode(memberDto.password));
-        memberEntity.setName(memberDto.name);
+        MemberEntity memberEntity = MemberEntity.builder()
+                .email(memberDto.getEmail())
+                .password(passwordEncoder.encode(memberDto.getPassword()))
+                .name(memberDto.getName())
+                .build();
         memberEntity.setCreatedAt(LocalDateTime.now());
         memberEntity.setUpdatedAt(LocalDateTime.now());
 
