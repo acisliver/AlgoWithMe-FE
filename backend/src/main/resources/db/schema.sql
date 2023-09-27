@@ -46,6 +46,8 @@ CREATE TABLE `files`
 (
     `id`              BIGINT       NOT NULL,
     `storage_file_id` VARCHAR(255) NOT NULL,
+    `created_at` DATETIME     NOT NULL,
+    `updated_at` DATETIME     NOT NULL,
     `project_id`      BIGINT       NOT NULL,
     PRIMARY KEY (`id`)
 );
