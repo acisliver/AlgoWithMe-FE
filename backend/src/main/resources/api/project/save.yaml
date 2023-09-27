@@ -1,6 +1,6 @@
 put:
-  summary: 프로젝트 저장
-  description: 프로젝트 저장
+  summary: 파일 수정
+  description: 프로젝트 내 파일 수정
   parameters:
     - in: header
       name: Authorization
@@ -8,24 +8,24 @@ put:
         type: string
       required: true
       description: 자격 증명
-    - in: path
-      name: id
+    - name: projectId
+      in: path
       schema:
         type: number
       required: true
       description: 프로젝트 식별자
+    - name: fileId
+      in: path
+      schema:
+        type: number
+      required: true
+      description: 파일 식별자
   requestBody:
     content:
       application/json:
         schema:
           type: object
           properties:
-            s3Bucket:
-              type: string
-              description: S3 버킷 이름
-            objectId:
-              type: string
-              description: S3 내 오브젝트 식별자
             content:
               type: string
               description: 코드 내용
