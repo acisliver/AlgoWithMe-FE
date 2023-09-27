@@ -30,15 +30,14 @@ public class ProjectService {
         ProjectEntity createdProject = ProjectEntity.builder()
                 .name(request.getName())
                 .description(request.getDescription())
+                .storageKey("storage_" + System.currentTimeMillis())
                 .build();
 
         createdProject = projectRepository.save(createdProject);
 
-        String storageId = "storage_" + createdProject.getId();
-
         return ProjectCreateResponse.builder()
                 .id(createdProject.getId())
-                .storageId(storageId)
+                .storageId(createdProject.getStorageKey())
                 .build();
     }
 

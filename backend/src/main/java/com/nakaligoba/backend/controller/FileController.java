@@ -26,14 +26,14 @@ public class FileController {
     }
 
     @PostMapping
-    public ResponseEntity<FileDto> saveFile(@Valid @RequestBody FileRequest request) {
+    public ResponseEntity<FileDto> saveFile(@Valid @RequestBody FileRequest request, @RequestParam Long projectId) {
         FileDto fileDto = FileDto.builder()
                 .fileName(request.getName())
                 .ext(request.getExt())
-                .content(request.getContent())
+                .storageFileId(request.getStorageFileId())
                 .build();
 
-        FileDto savedFileDto = fileService.createFile(fileDto);
+        FileDto savedFileDto = fileService.createFile(fileDto, projectId);
 
         return ResponseEntity.ok(savedFileDto);
     }
@@ -67,6 +67,7 @@ public class FileController {
         private final String name;
         @NotBlank
         private final String ext;
+        private final String storageFileId;
         private final String content;
     }
 
