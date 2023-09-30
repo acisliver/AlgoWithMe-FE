@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import ModalMenu_Btn from './ModalMenu_Btn';
+import {BiLogoJavascript, BiLogoPython, BiLogoJava } from 'react-icons/bi';
 
 const style = {
    
@@ -21,21 +22,24 @@ const style = {
     borderRadius:'21px',
 
 };
-const projects = [
+const PROJECTS = [
     {
         id: 1,
+        description : 'Java',
         name: "네카라쿠배 webIDE Project",
         date: "2023-09-25",
         collaborators: ["김지민", "장원영","안유진"]
     },
     {
         id: 2,
+        description : 'Python',
         name: "New Project",
         date: "2023-08-20",
         collaborators: ["박지영", "김민수", "최하늘"]
     },
     {
         id: 3,
+        description : 'JavaScript',
         name: "프로젝트 C",
         date: "2023-07-15",
         collaborators: ["정태영", "황미나"]
@@ -44,9 +48,13 @@ const projects = [
 ];
 
 
-export default function Index({onProjClick}) {
+
+export default function Index({onProjClick,modal,setModal,createModal}) {
     const [open, setOpen] = React.useState(true);
-    const [modal,setModal] =React.useState(false);
+    const [projects,setProjects] =React.useState(PROJECTS)
+    const [editingId, setEditingId] = React.useState(null);
+    // const [EditingName, setEditingName] = useState('');
+    
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
 
@@ -57,9 +65,35 @@ export default function Index({onProjClick}) {
         onProjClick(false)
     }
 
-    const createModal= ()=>{
-        setModal((prev)=>!prev);
+   
+
+
+    const descriptionIcon = (description)=>{
+        switch(description){
+            case "Java" : 
+                return <BiLogoJava size='30' color='#0078F1' />
+            case 'Python' :
+                return<BiLogoPython size='30' color='#0093B0' />
+            case 'JavaScript':
+                return<BiLogoJavascript size='30' color='#967D00' />
+        }
+        
     }
+
+    const renameProject =(editingId) =>{
+       setProjects(projects=> projects.map(
+        project=> project.id === editingId? { ...project, name: pjtName } : project
+       ))
+       console.log(editingId)
+       setEditingId(null)
+     
+    }
+
+    const deleteProject = (projectId) => {
+        const deletedProjects = projects.filter(project => project.id !== projectId);
+        setProjects(deletedProjects);
+      };
+      
    
     // const createClose = ()=>{
     //     setModal(false);
@@ -72,8 +106,12 @@ export default function Index({onProjClick}) {
         setPjtName(e.target.value)
     }
 
+
     const nameSubmit = (e) =>{
         e.preventDefault();
+        renameProject(editingId);
+        setPjtName('');
+        setEditingId(null);
     }
     const handleTextAreachange = (e) =>{
         setPjtTextAreaValue(e.target.value)
@@ -83,7 +121,7 @@ export default function Index({onProjClick}) {
          e.preventDefault();
     } 
 
-   
+
 
     return (
         <div>
@@ -109,12 +147,32 @@ export default function Index({onProjClick}) {
                     <hr className='mt-3'/>
                     <Typography id="modal-modal-description" component="div"  sx={{ my: 2}} style={{height : '430px'}}>
                      {projects.map((project)=>(
-                        <div key={project.id} className='flex  py-4 hover:bg-[#46425e] ' style={{paddingLeft:'30px',fontSize:'22px'}}>
-                                <div style={{width:'70px'}}>icon</div>
-                                <span style={{width:'460px'}}>{project.name}</span>
+                        <div key={project.id} className='flex  py-4 hover:bg-[#46425e] ' style={{paddingLeft:'30px',fontSize:'22px'}} >
+                                <div style={{width:'70px'}}>
+                                    {descriptionIcon(project.description)}
+                                </div>
+                                <div style={{ width: '460px' }}>
+                                    {editingId === project.id ? (
+                                        <form onSubmit={nameSubmit}>
+                                            <input 
+                                             className='bg-[#1D2332] focus:outline-none hover:bg-[#2B3245] h-8 rounded-md  my-0.5 placeholder:pl-2 text-white' 
+                                                type="text"
+                                                value={pjtName}
+                                                onChange={handlePjtNameChange}
+                                            />
+                                        </form>
+                                     ) : (
+                                        project.name
+                                    )}
+                                </div>
                                 <span style={{width:'150px'}} className='flex justify-center' >{project.date}</span>
-                                <span style={{width:'360px', marginLeft:'150px'}}>{project.collaborators}</span>
-                                <ModalMenu_Btn/>
+                                <span style={{width:'360px', marginLeft:'150px'}}>{project.collaborators.join(', ')}</span>
+                                <ModalMenu_Btn 
+                                    editingId={project.id}  
+                                    setEditingId={setEditingId}  
+                                    renameProject={renameProject} 
+                                    projectId={project.id}
+                                    deleteProject={deleteProject} />
                         </div>
                             ))}
                     </Typography>

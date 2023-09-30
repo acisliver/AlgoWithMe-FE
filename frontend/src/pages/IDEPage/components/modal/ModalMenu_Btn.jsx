@@ -6,7 +6,7 @@ import {GoPencil}  from 'react-icons/go'
 import {RiDeleteBinLine} from 'react-icons/ri' 
 import { useState } from 'react';
 
-export default function ModalMenu_Btn() {
+export default function ModalMenu_Btn({editingId, setEditingId,projectId,deleteProject}) {
   const [pjtBtnMenu, setPjtBtnMenu] = useState(null);
   const open = Boolean(pjtBtnMenu);
   
@@ -17,6 +17,17 @@ export default function ModalMenu_Btn() {
   const handleClose = () => {
     setPjtBtnMenu(null);
   };
+
+  const renamePJT = ()=>{
+    setEditingId(editingId)
+    setPjtBtnMenu(null);
+  }
+
+  const deletePJT =()=>{
+    deleteProject(projectId)
+    setPjtBtnMenu(null);
+  }
+  
 
   return (
     <div>
@@ -40,9 +51,9 @@ export default function ModalMenu_Btn() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}><GoPencil size='21' className="pr-2"/>Rename</MenuItem>
+        <MenuItem onClick={renamePJT}><GoPencil size='21' className="pr-2"/>Rename</MenuItem>
         <hr className='text-xl' />
-        <MenuItem onClick={handleClose}><RiDeleteBinLine size='22' color="#c22424" className="pr-2" />Delete</MenuItem>
+        <MenuItem onClick={deletePJT}><RiDeleteBinLine size='22' color="#c22424" className="pr-2" />Delete</MenuItem>
       </Menu>
     </div>
   );

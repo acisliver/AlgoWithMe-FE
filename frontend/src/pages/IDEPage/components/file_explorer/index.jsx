@@ -30,7 +30,7 @@ const INTIIAL_TREE = [
 
 
 
-export default function Explorer({ selectedTab }) {
+export default function Explorer({ selectedTab,createModal,projectBtnHandler }) {
 //   const [searchValue, setSearchValue] = useState("");
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
@@ -270,7 +270,7 @@ export default function Explorer({ selectedTab }) {
 } else if (selectedTab === 'tabSetting') {
   // tabSearch'를 클릭
   return (
-   <TabSettings/>
+   <TabSettings createModal={createModal} projectBtnHandler={projectBtnHandler}/>
   );
 }
 }

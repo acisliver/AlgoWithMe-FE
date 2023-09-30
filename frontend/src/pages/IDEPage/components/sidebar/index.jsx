@@ -3,7 +3,7 @@ import Explorer from "../file_explorer/index";
 
 
 
-const Index = () => {
+const Index = ({createModal,projectBtnHandler}) => {
   const [selectedTab, setSelectedTab] = useState(null);
 
   const tabHandleClick = (tabName) => {
@@ -38,7 +38,7 @@ const Index = () => {
     </svg>
   </div>
 </div>
-<Explorer selectedTab={selectedTab} />
+<Explorer selectedTab={selectedTab} createModal={createModal} projectBtnHandler={projectBtnHandler}/>
 </>
 )
 }
