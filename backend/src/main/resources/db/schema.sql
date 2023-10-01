@@ -1,3 +1,5 @@
+USE `web_ide`;
+
 CREATE TABLE `members`
 (
     `id`         BIGINT       NOT NULL AUTO_INCREMENT,
@@ -11,10 +13,10 @@ CREATE TABLE `members`
 
 CREATE TABLE `projects`
 (
-    `id`          BIGINT       NOT NULL,
+    `id`          BIGINT       NOT NULL AUTO_INCREMENT,
     `name`        VARCHAR(255) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
-    `storage_key` VARCHAR(255) NOT NULL,
+    `storage_id`  VARCHAR(255) NOT NULL,
     `created_at`  DATETIME     NOT NULL,
     `updated_at`  DATETIME     NOT NULL,
     PRIMARY KEY (`id`)
@@ -22,7 +24,7 @@ CREATE TABLE `projects`
 
 CREATE TABLE `member_projects`
 (
-    `id`         BIGINT       NOT NULL,
+    `id`         BIGINT       NOT NULL AUTO_INCREMENT,
     `project_id` BIGINT       NOT NULL,
     `member_id`  BIGINT       NOT NULL,
     `role`       VARCHAR(255) NOT NULL,
@@ -33,7 +35,7 @@ CREATE TABLE `member_projects`
 
 CREATE TABLE `chat_messages`
 (
-    `id`         BIGINT       NOT NULL,
+    `id`         BIGINT       NOT NULL AUTO_INCREMENT,
     `message`    VARCHAR(255) NOT NULL,
     `created_at` DATETIME     NOT NULL,
     `updated_at` DATETIME     NOT NULL,
@@ -44,10 +46,10 @@ CREATE TABLE `chat_messages`
 
 CREATE TABLE `files`
 (
-    `id`              BIGINT       NOT NULL,
+    `id`              BIGINT       NOT NULL AUTO_INCREMENT,
     `storage_file_id` VARCHAR(255) NOT NULL,
-    `created_at` DATETIME     NOT NULL,
-    `updated_at` DATETIME     NOT NULL,
+    `created_at`      DATETIME     NOT NULL,
+    `updated_at`      DATETIME     NOT NULL,
     `project_id`      BIGINT       NOT NULL,
     PRIMARY KEY (`id`)
 );
@@ -65,4 +67,4 @@ ALTER TABLE `chat_messages`
     ADD FOREIGN KEY (`member_id`) REFERENCES members (`id`);
 
 ALTER TABLE `files`
-    ADD FOREIGN KEY (`project_id`) REFERENCES projects(`id`);
+    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`);

@@ -22,14 +22,13 @@ public class ProjectEntity extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    // Todo storage_key 추가
-    @Column(name = "storage_key", nullable = false)
-    private String storageKey;
+    @Column(name = "storage_id", nullable = false)
+    private String storageId;
 
     @Builder
-    public ProjectEntity(String name, String description, String storageKey) {
+    public ProjectEntity(String name, String description, String storageId) {
         this.name = name;
         this.description = description;
-        this.storageKey = storageKey;
+        this.storageId = storageId;
     }
 }
