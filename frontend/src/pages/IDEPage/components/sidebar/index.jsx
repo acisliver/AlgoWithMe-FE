@@ -38,7 +38,7 @@ const Index = ({createModal,projectBtnHandler}) => {
     </svg>
   </div>
 </div>
-<Explorer selectedTab={selectedTab} createModal={createModal} projectBtnHandler={projectBtnHandler}/>
+<Explorer selectedTab={selectedTab} createModal={createModal} projectBtnHandler={projectBtnHandler} />
 </>
 )
 }

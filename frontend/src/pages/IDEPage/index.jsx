@@ -11,6 +11,7 @@ const index = () => {
   const [onModalClick, setOnModalClick] = useState(false);
   const [modal,setModal] =React.useState(false);
 
+
   const projectBtnHandler = (isOn) => {
     setOnModalClick(isOn);
   };
@@ -22,12 +23,18 @@ const index = () => {
 
   return (
     <div>
-    {onModalClick && <Modal onProjClick={projectBtnHandler} modal ={modal} setModal={setModal} createModal={createModal}/>}
+    {onModalClick && <Modal 
+                        onProjClick={projectBtnHandler} 
+                        modal ={modal} 
+                        setModal={setModal} 
+                        createModal={createModal}
+                  
+                        />}
       <div className="flex flex-col h-screen relative">
         <Header onProjClick={projectBtnHandler} />
         <div className="flex flex-row h-full">
           <div className="flex flex-row w-1/4">
-            <Sidebar createModal={createModal} projectBtnHandler={projectBtnHandler} />
+            <Sidebar createModal={createModal} projectBtnHandler={projectBtnHandler}/>
             <FileExplorer />
           </div>
           <div className="flex flex-col w-3/4 h-full">

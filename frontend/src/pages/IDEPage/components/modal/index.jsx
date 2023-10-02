@@ -25,21 +25,21 @@ const style = {
 const PROJECTS = [
     {
         id: 1,
-        description : 'Java',
+        template : 'Java',
         name: "네카라쿠배 webIDE Project",
         date: "2023-09-25",
         collaborators: ["김지민", "장원영","안유진"]
     },
     {
         id: 2,
-        description : 'Python',
+        template : 'Python',
         name: "New Project",
         date: "2023-08-20",
         collaborators: ["박지영", "김민수", "최하늘"]
     },
     {
         id: 3,
-        description : 'JavaScript',
+        template : 'JavaScript',
         name: "프로젝트 C",
         date: "2023-07-15",
         collaborators: ["정태영", "황미나"]
@@ -52,11 +52,15 @@ const PROJECTS = [
 export default function Index({onProjClick,modal,setModal,createModal}) {
     const [open, setOpen] = React.useState(true);
     const [projects,setProjects] =React.useState(PROJECTS)
+
     const [editingId, setEditingId] = React.useState(null);
     // const [EditingName, setEditingName] = useState('');
     
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
+    const [template, setTemplate] = React.useState('');
+    const[nextId,setNextId]= React.useState(4);
+
 
 
     // const handleOpen = () => setOpen(true);
@@ -68,8 +72,8 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
    
 
 
-    const descriptionIcon = (description)=>{
-        switch(description){
+    const templateIcon = (template)=>{
+        switch(template){
             case "Java" : 
                 return <BiLogoJava size='30' color='#0078F1' />
             case 'Python' :
@@ -95,13 +99,19 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
       };
       
    
-    // const createClose = ()=>{
-    //     setModal(false);
-    //       onProjClick(false)
-    // } 
+    const createClose = ()=>{
+        setModal(false);
+          onProjClick(false)
+    } 
+
     const handleBack = () =>{
         setModal(false);
     }
+
+    const handleTemplateClick=(language)=>{
+        setTemplate(language)
+    }
+
     const handlePjtNameChange = (e)=>{
         setPjtName(e.target.value)
     }
@@ -120,7 +130,23 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
     const pjtDescriptionSubmit = (e) => {
          e.preventDefault();
     } 
+ 
 
+    const createProject = () =>{
+        const newProject ={
+            id : nextId,
+            template: template,
+            name: pjtName ,
+            description : pjtTextAreaValue, 
+            date: new Date().toISOString().slice(0, 10),
+            collaborators: []  
+        }
+        setProjects(prevProjects => [...prevProjects, newProject]);
+        setNextId(prevId => prevId + 1);
+        setPjtName('');
+        setPjtTextAreaValue('');
+        // createClose();
+    }
 
 
     return (
@@ -129,7 +155,7 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+                aria-describedby="modal-modal-template"
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title"  variant="h6" component="div" className='flex pr-1' onClick={()=>{handleClose();}}>
@@ -145,11 +171,11 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                         </div>
                     </Typography>
                     <hr className='mt-3'/>
-                    <Typography id="modal-modal-description" component="div"  sx={{ my: 2}} style={{height : '430px'}}>
+                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px'}}>
                      {projects.map((project)=>(
                         <div key={project.id} className='flex  py-4 hover:bg-[#46425e] ' style={{paddingLeft:'30px',fontSize:'22px'}} >
                                 <div style={{width:'70px'}}>
-                                    {descriptionIcon(project.description)}
+                                    {templateIcon(project.template)}
                                 </div>
                                 <div style={{ width: '460px' }}>
                                     {editingId === project.id ? (
@@ -188,11 +214,17 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                 open={modal}
                                 // onClose={createClose}
                                 aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
+                                aria-describedby="modal-modal-template"
                             >
                                 <Box sx={style}>
                                     <Typography id="modal-modal-title" variant="h6" component="div" className='flex' style={{height:'500px'}} >
-                                        <div className=' bg-white text-black rounded-2xl p-4' style={{width : '230px', height:'475px'}}>Language</div>
+                                        <div className=' bg-white text-black rounded-2xl p-4 flex flex-col' style={{width : '230px', height:'475px'}}>
+                                            <button  className={`flex p-1 ${template === 'Java' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}  onClick={() => handleTemplateClick('Java')}>Java</button>
+                                            <button className={`flex p-1 ${template === 'JavaScript' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('JavaScript')}>JavaScript</button>
+                                            <button  className={`flex p-1 ${template === 'C' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('C')}>C</button>
+                                            <button className={`flex p-1 ${template === 'C++' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('C++')}>C++</button>
+                                            <button className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Python')}>Python</button>
+                                        </div>
                                         <div style={{width:'1000px', color:'black', display:'flex', flexDirection:'column', alignItems:'center'}}>
                                             <form onSubmit={nameSubmit} >
                                                 <input
@@ -218,7 +250,7 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                     <button className='py-1 px-5 bg-white text-black rounded-2xl' onClick={handleBack}>
                                         Back
                                     </button>
-                                    <button  className='py-1 px-4 bg-white text-black rounded-2xl'>
+                                    <button  className='py-1 px-4 bg-white text-black rounded-2xl' onClick={createProject}>
                                         Create
                                     </button>
                                     </div>
