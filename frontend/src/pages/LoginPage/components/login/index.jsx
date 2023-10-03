@@ -5,33 +5,69 @@ import backImage from "../../background.png";
 import kakaoImage from "../../kakao.png";
 import facebookImage from "../../facebook.png";
 import githubImage from "../../github.png";
+import axios from "axios";
 
 const index = () => {
   const navigate = useNavigate();
 
-  // const [setIsCorrectLogin] = useState(true);
   const [loginValues, setLoginValues] = useState({
     email: "",
     password: "",
   });
-
-  const testEmail = "asd";
-  const testPassword = "asd";
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoginValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
-  const checkLogin = () => {
-    if (
-      loginValues.email === testEmail &&
-      loginValues.password === testPassword
-    ) {
-      navigate("/idepage");
-    } else {
-      // 일치하지 않는 경우 추가하기
+  // 로그인 에러 상태 관리
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // // 테스트
+  // const testEmail = "asd";
+  // const testPassword = "asd";
+
+  const checkLogin = async () => {
+    if (!loginValues.email && !loginValues.password) {
+      setErrorMessage("이메일을 입력해주세요");
+      return;
+    } else if (!loginValues.email) {
+      setErrorMessage("이메일을 입력해주세요");
+      return;
+    } else if (!loginValues.password) {
+      setErrorMessage("비밀번호를 입력해주세요");
+      return;
     }
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/signin",
+        {
+          email: loginValues.email,
+          password: loginValues.password,
+        }
+      );
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        setErrorMessage(""); // 에러 상태 초기화
+        navigate("/idepage");
+      } else {
+        setErrorMessage("로그인에 실패했습니다. 다시 시도해 주세요.");
+      }
+    } catch (error) {
+      //로그인 에러 표시
+      console.error("Login Error:", error);
+      setErrorMessage("로그인에 실패했습니다. 다시 시도해 주세요.");
+    }
+    // //테스트
+    // if (
+    //   loginValues.email === testEmail &&
+    //   loginValues.password === testPassword
+    // ) {
+    //   setErrorMessage(""); // 에러 상태 초기화
+    //   navigate("/idepage");
+    // } else {
+    //   setErrorMessage("이메일이나 비밀번호가 틀립니다"); // 로그인 에러 표시
+    // }
   };
 
   const handleKakaoLogin = () => {
@@ -84,6 +120,10 @@ const index = () => {
                   onChange={handleInputChange}
                 />
               </div>
+              {/* 로그인 에러 메시지 출력 */}
+              {errorMessage && (
+                <p className="text-red-600 mb-4 text-center">{errorMessage}</p>
+              )}
               <div
                 className="flex items-center justify-center w-full h-8 mb-4 bg-blue-400 rounded-2xl cursor-pointer hover:bg-blue-600 shadow-lg hover:shadow-xl"
                 onClick={checkLogin}
