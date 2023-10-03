@@ -44,14 +44,14 @@ const index = () => {
                   alt="로고 이미지"
                 />
                 <input
-                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-10 mb-2"
+                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-10 mb-2 pl-2"
                   type="text"
                   name="email"
                   placeholder="이메일"
                   onChange={handleInputChange}
                 />
                 <input
-                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5"
+                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 pl-2"
                   type="password"
                   name="password"
                   placeholder="비밀번호"
