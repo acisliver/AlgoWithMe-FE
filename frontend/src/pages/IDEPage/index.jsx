@@ -8,7 +8,7 @@ import Modal from "./components/modal";
 import React, { useState } from "react";
 
 const index = () => {
-  const [onModalClick, setOnModalClick] = useState(false);
+  const [onModalClick, setOnModalClick] = useState(true);
   const [modal,setModal] =React.useState(false);
 
 

@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import ModalMenu_Btn from './ModalMenu_Btn';
 import {BiLogoJavascript, BiLogoPython, BiLogoJava } from 'react-icons/bi';
+import * as projectService from '../../../../service/projectService';
 
 const style = {
    
@@ -22,36 +23,36 @@ const style = {
     borderRadius:'21px',
 
 };
-const PROJECTS = [
-    {
-        id: 1,
-        template : 'Java',
-        name: "네카라쿠배 webIDE Project",
-        date: "2023-09-25",
-        collaborators: ["김지민", "장원영","안유진"]
-    },
-    {
-        id: 2,
-        template : 'Python',
-        name: "New Project",
-        date: "2023-08-20",
-        collaborators: ["박지영", "김민수", "최하늘"]
-    },
-    {
-        id: 3,
-        template : 'JavaScript',
-        name: "프로젝트 C",
-        date: "2023-07-15",
-        collaborators: ["정태영", "황미나"]
-    }
+// const PROJECTS = [
+//     {
+//         id: 1,
+//         template : 'Java',
+//         name: "네카라쿠배 webIDE Project",
+//         date: "2023-09-25",
+//         collaborators: ["김지민", "장원영","안유진"]
+//     },
+//     {
+//         id: 2,
+//         template : 'Python',
+//         name: "New Project",
+//         date: "2023-08-20",
+//         collaborators: ["박지영", "김민수", "최하늘"]
+//     },
+//     {
+//         id: 3,
+//         template : 'JavaScript',
+//         name: "프로젝트 C",
+//         date: "2023-07-15",
+//         collaborators: ["정태영", "황미나"]
+//     }
 
-];
+// ];
 
 
 
 export default function Index({onProjClick,modal,setModal,createModal}) {
     const [open, setOpen] = React.useState(true);
-    const [projects,setProjects] =React.useState(PROJECTS)
+    const [projects,setProjects] =React.useState([])
 
     const [editingId, setEditingId] = React.useState(null);
     // const [EditingName, setEditingName] = useState('');
@@ -59,8 +60,25 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
     const [template, setTemplate] = React.useState('');
-    const[nextId,setNextId]= React.useState(4);
+    const[nextId,setNextId]= React.useState(1);
 
+    
+    React.useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await projectService.getProjects(); 
+                if (response.success) {
+                    setProjects(response.data);
+                } else {
+                    console.error(response.error); 
+                }
+            } catch (error) {
+                console.error(error); 
+            }
+        };
+
+        fetchProjects(); 
+    }, []); 
 
 
     // const handleOpen = () => setOpen(true);
@@ -69,8 +87,9 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
         onProjClick(false)
     }
 
-   
+    
 
+    
 
     const templateIcon = (template)=>{
         switch(template){
@@ -84,11 +103,10 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
         
     }
 
-    const renameProject =(editingId) =>{
+    const renameProject = (editingId) =>{
        setProjects(projects=> projects.map(
         project=> project.id === editingId? { ...project, name: pjtName } : project
        ))
-       console.log(editingId)
        setEditingId(null)
      
     }
@@ -132,21 +150,31 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
     } 
  
 
-    const createProject = () =>{
+    const createProject = async () =>{
         const newProject ={
             id : nextId,
             template: template,
             name: pjtName ,
             description : pjtTextAreaValue, 
-            date: new Date().toISOString().slice(0, 10),
-            collaborators: []  
+            collaborators: []
+            // date: new Date().toISOString().slice(0, 10),
         }
-        setProjects(prevProjects => [...prevProjects, newProject]);
-        setNextId(prevId => prevId + 1);
-        setPjtName('');
-        setPjtTextAreaValue('');
-        // createClose();
-    }
+        try {
+            const response= await projectService.createProject(newProject);
+            if(response.sucess){
+                setProjects(prevProjects => [...prevProjects, newProject]);
+                setNextId(prevId => prevId + 1);
+                setPjtName('');
+                setPjtTextAreaValue('');
+                // createClose();
+            } else {
+                console.error(response.error)
+            }          
+         } catch (error){
+            console.error(error);  
+        }
+    
+    };
 
 
     return (
@@ -233,6 +261,7 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                                     value={pjtName} 
                                                     onChange={handlePjtNameChange} 
                                                     placeholder="프로젝트 이름" 
+                                                    required
                                                 />
                                             </form>
                                             <form onSubmit={pjtDescriptionSubmit} >
@@ -241,6 +270,7 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                                     value={pjtTextAreaValue} 
                                                     onChange={handleTextAreachange} 
                                                     placeholder="프로젝트 설명 " 
+                                                    required
                                                 />
                                             </form>
                                          </div>
