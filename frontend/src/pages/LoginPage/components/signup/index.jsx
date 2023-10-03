@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../../네카라쿠배.png";
 import backImage from "../../background.png";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
 
 const index = () => {
   const navigate = useNavigate();
@@ -13,28 +15,86 @@ const index = () => {
     name: "",
   });
 
+  //테스트
+  const mock = new MockAdapter(axios);
+  mock
+    .onPost("http://localhost:8080/api/v1/auth/email/발송API엔드포인트")
+    .reply(200, {
+      status: true,
+    });
+  mock.onPost("code-verification-endpoint").reply(200, {
+    status: true,
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoginValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
   //이메일 인증
-  const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  //타이머
+  const [isTimeOut, setIsTimeOut] = useState(false);
+  const [minutes, setMinutes] = useState(5);
+  const [seconds, setSeconds] = useState(0);
 
-  const handleVerificationClick = () => {
-    setShowVerificationInput(true);
+  const handleVerificationClick = async () => {
+    try {
+      // 이메일 인증번호 발송 API 호출
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/email/발송API엔드포인트",
+        { email: loginValues.email }
+      );
+      if (response.status === 200 && response.data.status) {
+        // 인증번호가 성공적으로 발송된 경우
+        alert("인증번호를 전송했습니다.");
+        setIsEmailVerified(true); // 이메일이 인증되었음을 상태로 설정
+        setSuccessEmail(true); // 이메일 인증 성공
+        setIsTimeOut(false); // 다시 인증버튼 누를 시 리셋
+        setMinutes(5); // 제한 시간 리셋
+        setSeconds(0); // 초 리셋
+      } else {
+        // API 호출은 성공했지만 인증번호 발송에 실패한 경우
+        alert("인증번호를 전송하는 데 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (error) {
+      // API 호출 자체가 실패한 경우
+      console.error("Email verification error!", error);
+      alert("이메일 인증 중 오류가 발생하였습니다.");
+    }
   };
 
   const handleVerifyCodeChange = (e) => {
     setVerificationCode(e.target.value);
   };
 
-  const handleVerifyClick = () => {
-    // 인증 코드를 확인하는 로직 추가하기
+  const handleVerifyClick = async () => {
+    try {
+      // 인증 코드 확인 API 호출
+      const response = await axios.post("code-verification-endpoint", {
+        email: loginValues.email,
+        code: verificationCode,
+      });
+      if (response.status === 200 && response.data.status) {
+        alert("인증에 성공하였습니다.");
+        setIsEmailVerified(false); // 인증에 성공하면 UI 숨김
+        setSuccessCode(true); // 코드 인증 성공
+        // 추가적인 로직 (예: 인증 성공 시 처리 등)
+      } else {
+        alert("인증 코드가 올바르지 않습니다.");
+      }
+    } catch (error) {
+      console.error("Code verification error!", error);
+      alert("인증 코드 확인 중 오류가 발생하였습니다.");
+    }
   };
 
-  //확인
+  //인증 여부 확인
+  const [successEmail, setSuccessEmail] = useState(false);
+  const [successCode, setSuccessCode] = useState(false);
+
+  //전체 필드 확인
   const checkSignup = () => {
     //비밀번호 일치 확인
     if (loginValues.password !== loginValues.checkpassword) {
@@ -46,16 +106,41 @@ const index = () => {
       alert("입력하지 않은 사항이 있습니다.");
       return;
     }
-    // 인증 코드 확인
-    // if (verificationCode !== "1234") {  // 예시로 "1234"를 사용
-    //   alert("인증번호가 틀립니다");
-    //   return;
-    // }
-    
+    //이메일, 인증번호 확인
+    if (!successEmail || !successCode) {
+      alert("이메일 및 코드를 인증해주세요");
+      return;
+    }
+
     // 서버 요청 예시:
     // axios.post('/signup', loginValues).then(response => {...});
     navigate("/");
   };
+
+  //타이머 로직
+  useEffect(() => {
+    let timer;
+    if (isEmailVerified) {
+      timer = setInterval(() => {
+        setSeconds((prevSeconds) => {
+          if (prevSeconds === 0) {
+            if (minutes === 0) {
+              clearInterval(timer);
+              setIsEmailVerified(false); // 인증 시간 초과
+              setIsTimeOut(true); // 타임아웃 상태를 true로 설정
+              return 0;
+            } else {
+              setMinutes((prevMinutes) => prevMinutes - 1);
+              return 59;
+            }
+          } else {
+            return prevSeconds - 1;
+          }
+        });
+      }, 10);
+    }
+    return () => clearInterval(timer);
+  }, [isEmailVerified, seconds, minutes]);
 
   return (
     <div
@@ -92,23 +177,31 @@ const index = () => {
                     인증
                   </button>
                 </div>
-                {showVerificationInput && (
-                  <div className="flex mt-5 mb-2">
-                    <input
-                      className="flex-1 bg-gray-200 border border-gray-300 py-3 pl-2 "
-                      type="text"
-                      name="verificationCode"
-                      placeholder="인증 코드"
-                      value={verificationCode}
-                      onChange={handleVerifyCodeChange}
-                    />
-                    <button
-                      className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2"
-                      onClick={handleVerifyClick}
-                    >
-                      확인
-                    </button>
-                  </div>
+                {isEmailVerified && ( // isEmailVerified가 true일 때만 보이게 적용
+                  <>
+                    <div className="flex mt-5 mb-2 relative">
+                      <input
+                        className="flex-1 bg-gray-200 border border-gray-300 py-3 pl-2 "
+                        type="text"
+                        name="verificationCode"
+                        placeholder="인증 코드"
+                        value={verificationCode}
+                        onChange={handleVerifyCodeChange}
+                      />
+                      <button
+                        className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2"
+                        onClick={handleVerifyClick}
+                      >
+                        확인
+                      </button>
+                    </div>
+                    <p className=" text-blue-600 mt-3">
+                      남은 인증 시간: {minutes}:{seconds}
+                    </p>
+                  </>
+                )}
+                {isTimeOut && (
+                  <p className="text-red-600 mt-3">인증 시간이 초과했습니다.</p>
                 )}
                 <input
                   className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2"
