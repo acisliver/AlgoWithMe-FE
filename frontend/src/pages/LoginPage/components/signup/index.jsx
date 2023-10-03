@@ -22,13 +22,14 @@ const index = () => {
 
   //테스트
   const mock = new MockAdapter(axios);
-  mock
-    .onPost("http://localhost:8080/api/v1/auth/email/발송API엔드포인트")
-    .reply(200, {
-      status: true,
-    });
-  mock.onPost("code-verification-endpoint").reply(200, {
-    status: true,
+  mock.onPost("http://localhost:8080/api/v1/auth/email").reply(200, {
+    message: "인증번호를 전송하였습니다.",
+  });
+  mock.onPost("http://localhost:8080/api/v1/auth/email/verify").reply(200, {
+    message: "인증 완료되었습니다.",
+  });
+  mock.onPost("http://localhost:8080/api/v1/auth/signup").reply(200, {
+    message: "회원가입이 완료되었습니다.",
   });
 
   //이메일 인증
@@ -43,12 +44,12 @@ const index = () => {
     try {
       // 이메일 인증번호 발송 API 호출
       const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/email/발송API엔드포인트",
+        "http://localhost:8080/api/v1/auth/email",
         { email: loginValues.email }
       );
-      if (response.status === 200 && response.data.status) {
+      if (response.data && response.data.message) {
         // 인증번호가 성공적으로 발송된 경우
-        alert("인증번호를 전송했습니다.");
+        alert(response.data.message);
         setIsEmailVerified(true); // 이메일이 인증되었음을 상태로 설정
         setSuccessEmail(true); // 이메일 인증 성공
         setIsTimeOut(false); // 다시 인증버튼 누를 시 리셋
@@ -65,19 +66,18 @@ const index = () => {
     }
   };
 
-  const handleVerifyCodeChange = (e) => {
-    setVerificationCode(e.target.value);
-  };
-
   const handleVerifyClick = async () => {
     try {
       // 인증 코드 확인 API 호출
-      const response = await axios.post("code-verification-endpoint", {
-        email: loginValues.email,
-        code: verificationCode,
-      });
-      if (response.status === 200 && response.data.status) {
-        alert("인증에 성공하였습니다.");
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/email/verify",
+        {
+          email: loginValues.email,
+          certificationNumber: verificationCode,
+        }
+      );
+      if (response.data && response.data.message) {
+        alert(response.data.message);
         setIsEmailVerified(false); // 인증에 성공하면 UI 숨김
         setSuccessCode(true); // 코드 인증 성공
         // 추가적인 로직 (예: 인증 성공 시 처리 등)
@@ -95,7 +95,7 @@ const index = () => {
   const [successCode, setSuccessCode] = useState(false);
 
   //전체 필드 확인
-  const checkSignup = () => {
+  const checkSignup = async () => {
     //비밀번호 일치 확인
     if (loginValues.password !== loginValues.checkpassword) {
       alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
@@ -111,10 +111,26 @@ const index = () => {
       alert("이메일 및 코드를 인증해주세요");
       return;
     }
-
-    // 서버 요청 예시:
-    // axios.post('/signup', loginValues).then(response => {...});
-    navigate("/");
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/signup",
+        {
+          email: loginValues.email,
+          password: loginValues.password,
+          name: loginValues.name,
+        }
+      );
+      if (response.data && response.data.message) {
+        alert(response.data.message);
+        navigate("/");
+      } else {
+        alert("회원가입에 실패하였습니다.");
+      }
+    } catch (error) {
+      console.error("Signup error!", error);
+      alert("회원가입 중 오류가 발생하였습니다.");
+    }
+    // 서버 요청 추가 할 사항 있으면 할 것
   };
 
   //타이머 로직
@@ -137,7 +153,7 @@ const index = () => {
             return prevSeconds - 1;
           }
         });
-      }, 10);
+      }, 1000);
     }
     return () => clearInterval(timer);
   }, [isEmailVerified, seconds, minutes]);
@@ -186,7 +202,7 @@ const index = () => {
                         name="verificationCode"
                         placeholder="인증 코드"
                         value={verificationCode}
-                        onChange={handleVerifyCodeChange}
+                        onChange={(e) => setVerificationCode(e.target.value)}
                       />
                       <button
                         className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2 shadow-lg hover:shadow-xl"
