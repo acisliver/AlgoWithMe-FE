@@ -164,14 +164,14 @@ const index = () => {
                 />
                 <div className="flex mt-10 mb-2">
                   <input
-                    className="flex-1 bg-gray-200 border border-gray-300 py-3 pl-2"
+                    className="flex-1 bg-gray-200 border border-gray-300 py-3 pl-2 shadow-lg hover:shadow-xl"
                     type="text"
                     name="email"
                     placeholder="이메일"
                     onChange={handleInputChange}
                   />
                   <button
-                    className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2"
+                    className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2 shadow-lg hover:shadow-xl"
                     onClick={handleVerificationClick}
                   >
                     인증
@@ -181,7 +181,7 @@ const index = () => {
                   <>
                     <div className="flex mt-5 mb-2 relative">
                       <input
-                        className="flex-1 bg-gray-200 border border-gray-300 py-3 pl-2 "
+                        className="flex-1 bg-gray-200 border border-gray-300 py-3 pl-2 shadow-lg hover:shadow-xl"
                         type="text"
                         name="verificationCode"
                         placeholder="인증 코드"
@@ -189,36 +189,36 @@ const index = () => {
                         onChange={handleVerifyCodeChange}
                       />
                       <button
-                        className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2"
+                        className="flex-shrink-0 bg-white border border-blue-600 rounded-2xl hover:bg-blue-200 text-blue-600 px-4 ml-2 shadow-lg hover:shadow-xl"
                         onClick={handleVerifyClick}
                       >
                         확인
                       </button>
                     </div>
-                    <p className=" text-blue-600 mt-3">
+                    <p className=" text-blue-600 mt-4">
                       남은 인증 시간: {minutes}:{seconds}
                     </p>
                   </>
                 )}
                 {isTimeOut && (
-                  <p className="text-red-600 mt-3">인증 시간이 초과했습니다.</p>
+                  <p className="text-red-600 mt-4">인증 시간이 초과했습니다.</p>
                 )}
                 <input
-                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2"
+                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2 shadow-lg hover:shadow-xl"
                   type="password"
                   name="password"
                   placeholder="비밀번호"
                   onChange={handleInputChange}
                 />
                 <input
-                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2"
+                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2 shadow-lg hover:shadow-xl"
                   type="password"
                   name="checkpassword"
                   placeholder="비밀번호 확인"
                   onChange={handleInputChange}
                 />
                 <input
-                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2"
+                  className="w-full bg-gray-200 border border-gray-300 py-3 mt-5 mb-2 pl-2 shadow-lg hover:shadow-xl"
                   type="text"
                   name="name"
                   placeholder="닉네임"
@@ -226,7 +226,7 @@ const index = () => {
                 />
               </div>
               <div
-                className="flex items-center justify-center w-full mb-10 h-8 bg-blue-400 rounded-2xl cursor-pointer hover:bg-blue-600"
+                className="flex items-center justify-center w-full mb-10 h-8 bg-blue-400 rounded-2xl cursor-pointer hover:bg-blue-600 shadow-lg hover:shadow-xl"
                 onClick={() => checkSignup()}
               >
                 <span className="text-white text-sm font-bold">가입하기</span>
