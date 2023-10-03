@@ -15,6 +15,11 @@ const index = () => {
     name: "",
   });
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLoginValues((prevValues) => ({ ...prevValues, [name]: value }));
+  };
+
   //테스트
   const mock = new MockAdapter(axios);
   mock
@@ -25,11 +30,6 @@ const index = () => {
   mock.onPost("code-verification-endpoint").reply(200, {
     status: true,
   });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setLoginValues((prevValues) => ({ ...prevValues, [name]: value }));
-  };
 
   //이메일 인증
   const [verificationCode, setVerificationCode] = useState("");
