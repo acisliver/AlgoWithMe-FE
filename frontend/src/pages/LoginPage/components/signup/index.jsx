@@ -168,10 +168,10 @@ const index = () => {
       }}
     >
       <div>
-        <div className="flex flex-row bg-white">
+        <div className="flex flex-row bg-white rounded-2xl">
           {/* 입력 */}
           <div className="w-96 h-full">
-            <div className="border border-gray-300 p-12 ">
+            <div className="border border-gray-300 p-12 rounded-2xl">
               <div className="pb-10 w-full">
                 <img
                   className="w-full h-16"
