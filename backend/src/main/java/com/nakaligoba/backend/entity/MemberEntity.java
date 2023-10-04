@@ -3,10 +3,10 @@ package com.nakaligoba.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "members")
@@ -26,6 +26,9 @@ public class MemberEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "member_projects", fetch = FetchType.LAZY)
+    private List<MemberProjectEntity> memberProjects = new ArrayList<>();
 
     @Builder
     public MemberEntity(String email, String password, String name) {

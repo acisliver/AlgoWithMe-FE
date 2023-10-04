@@ -1,44 +1,66 @@
 package com.nakaligoba.backend.service;
 
+import com.nakaligoba.backend.entity.MemberEntity;
+import com.nakaligoba.backend.entity.MemberProjectEntity;
 import com.nakaligoba.backend.entity.ProjectEntity;
+import com.nakaligoba.backend.entity.Role;
+import com.nakaligoba.backend.repository.MemberProjectRepository;
+import com.nakaligoba.backend.repository.MemberRepository;
 import com.nakaligoba.backend.repository.ProjectRepository;
 import com.nakaligoba.backend.controller.ProjectController.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final MemberRepository memberRepository;
+    private final MemberProjectRepository memberProjectRepository;
 
     @Transactional
-    public ProjectCreateResponse create(ProjectCreateRequest request) {
-        if (projectRepository.existsByName(request.getName())) {
+    public ProjectCreateResponse create(CreateProjectDto dto) {
+        MemberEntity member = memberRepository.findByEmail(dto.email);
+
+        if (isDuplicatedName(member, dto.getName())) {
             throw new IllegalArgumentException("프로젝트명이 중복되었습니다.");
         }
 
-        // Todo. template, storageId 추후 수정 필요
-        String template = "python";
-
+        String key = String.format("%s/%s/", member.getId(), dto.name);
         ProjectEntity createdProject = ProjectEntity.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .storageKey("storage_" + System.currentTimeMillis())
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .storageId(key)
+                .build();
+        MemberProjectEntity memberProject = MemberProjectEntity.builder()
+                .member(member)
+                .project(createdProject)
+                .role(Role.OWNER)
                 .build();
 
         createdProject = projectRepository.save(createdProject);
+        memberProjectRepository.save(memberProject);
 
+        log.info("Project(id: {}, name: {}) is created", createdProject.getId(), createdProject.getName());
         return ProjectCreateResponse.builder()
                 .id(createdProject.getId())
-                .storageId(createdProject.getStorageKey())
                 .build();
+    }
+
+    private boolean isDuplicatedName(MemberEntity member, String name) {
+        return member.getMemberProjects()
+                .stream()
+                .map(MemberProjectEntity::getProject)
+                .map(ProjectEntity::getName)
+                .anyMatch(n -> n.equals(name));
     }
 
     @Transactional
@@ -56,5 +78,13 @@ public class ProjectService {
                         ))
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Data
+    @Builder
+    public static class CreateProjectDto {
+        private final String name;
+        private final String description;
+        private final String email;
     }
 }
