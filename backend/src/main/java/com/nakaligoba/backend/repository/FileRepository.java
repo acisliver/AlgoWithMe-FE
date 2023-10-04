@@ -4,5 +4,6 @@ import com.nakaligoba.backend.entity.FileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
-    boolean existsByName(String filename);
+
+    boolean existsByStorageFileId(String storageFileId);
 }

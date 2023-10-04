@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/file")
+@RequestMapping("/api/v1/projects/{projectId}/files")
 public class FileController {
 
     private final FileService fileService;
@@ -26,16 +27,25 @@ public class FileController {
     }
 
     @PostMapping
-    public ResponseEntity<FileDto> saveFile(@Valid @RequestBody FileRequest request, @RequestParam Long projectId) {
-        FileDto fileDto = FileDto.builder()
+    public ResponseEntity<CreateFileResponse> saveFile(
+            @PathVariable Long projectId,
+            @Valid @RequestBody FileRequest request
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        String username = authentication.getName();
+        CreateFileDto dto = CreateFileDto.builder()
                 .fileName(request.getName())
                 .ext(request.getExt())
-                .storageFileId(request.getStorageFileId())
+                .userEmail("test@test.com")
+                .projectId(projectId)
                 .build();
+        log.info("Logged in Member email: {}", dto.getUserEmail());
 
-        FileDto savedFileDto = fileService.createFile(fileDto, projectId);
+        Long fileId = fileService.createFile(dto);
+        CreateFileResponse response = new CreateFileResponse(fileId);
 
-        return ResponseEntity.ok(savedFileDto);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
@@ -69,6 +79,11 @@ public class FileController {
         private final String ext;
         private final String storageFileId;
         private final String content;
+    }
+
+    @Data
+    static class CreateFileResponse {
+        private final Long id;
     }
 
     @Data
