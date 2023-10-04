@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 import ModalMenu_Btn from './ModalMenu_Btn';
 import {BiLogoJavascript, BiLogoPython, BiLogoJava } from 'react-icons/bi';
 import * as projectService from '../../../../service/projectService';
+import ProfileBadge from "../../../../components/ProfileBadge.jsx";
 
 const style = {
    
@@ -23,39 +24,39 @@ const style = {
     borderRadius:'21px',
 
 };
-// const PROJECTS = [
-//     {
-//         id: 1,
-//         template : 'Java',
-//         name: "네카라쿠배 webIDE Project",
-//         date: "2023-09-25",
-//         collaborators: ["김지민", "장원영","안유진"]
-//     },
-//     {
-//         id: 2,
-//         template : 'Python',
-//         name: "New Project",
-//         date: "2023-08-20",
-//         collaborators: ["박지영", "김민수", "최하늘"]
-//     },
-//     {
-//         id: 3,
-//         template : 'JavaScript',
-//         name: "프로젝트 C",
-//         date: "2023-07-15",
-//         collaborators: ["정태영", "황미나"]
-//     }
+const PROJECTS = [
+    {
+        id: 1,
+        template : 'Java',
+        name: "네카라쿠배 webIDE Project",
+        date: "2023-09-25",
+        collaborators: ["김지민", "장원영","안유진"]
+    },
+    {
+        id: 2,
+        template : 'Python',
+        name: "New Project",
+        date: "2023-08-20",
+        collaborators: ["박지영", "김민수", "최하늘"]
+    },
+    {
+        id: 3,
+        template : 'JavaScript',
+        name: "프로젝트 C",
+        date: "2023-07-15",
+        collaborators: ["정태영", "황미나"]
+    }
 
-// ];
+];
 
 
 
 export default function Index({onProjClick,modal,setModal,createModal}) {
     const [open, setOpen] = React.useState(true);
-    const [projects,setProjects] =React.useState([])
+    const [projects,setProjects] =React.useState(PROJECTS)
 
     const [editingId, setEditingId] = React.useState(null);
-    // const [EditingName, setEditingName] = useState('');
+    const [EditingName, setEditingName] = React.useState('');
     
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
@@ -220,7 +221,9 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                     )}
                                 </div>
                                 <span style={{width:'150px'}} className='flex justify-center' >{project.date}</span>
-                                <span style={{width:'360px', marginLeft:'150px'}}>{project.collaborators.join(', ')}</span>
+                                {/*<span style={{width:'360px', marginLeft:'150px'}}>{project.collaborators.join(', ')}</span>*/}
+                            <span className="flex">{project.collaborators.map(c => <ProfileBadge name={c[0]} />)
+                            }</span>
                                 <ModalMenu_Btn 
                                     editingId={project.id}  
                                     setEditingId={setEditingId}  
