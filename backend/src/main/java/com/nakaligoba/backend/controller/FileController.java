@@ -5,7 +5,10 @@ import com.nakaligoba.backend.service.RunFileService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import com.nakaligoba.backend.service.FileService.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,17 +51,21 @@ public class FileController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<FileDto> updateFile(@PathVariable Long id, @Valid @RequestBody FileRequest request) {
+    @PutMapping("/{fileId}")
+    public ResponseEntity<Void> updateFile(
+            @PathVariable Long projectId,
+            @PathVariable Long fileId,
+            @Valid @RequestBody FileRequest request
+    ) {
         FileDto fileDto = FileDto.builder()
                 .fileName(request.getName())
                 .ext(request.getExt())
                 .content(request.getContent())
                 .build();
 
-        FileDto updatedFileDto = fileService.updateFile(id, fileDto);
+        fileService.updateFile(projectId, fileId, fileDto);
 
-        return ResponseEntity.ok(updatedFileDto);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}/run")

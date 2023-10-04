@@ -14,7 +14,9 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -63,22 +65,23 @@ public class FileService {
     }
 
     @Transactional
-    public FileDto updateFile(Long fileId, FileDto fileDto) {
-        FileEntity fileEntity = fileRepository.findById(fileId)
+    public void updateFile(Long projectId, Long fileId, FileDto fileDto) {
+        List<FileEntity> files = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NoSuchElementException("해당 프로젝트를 찾을 수 없습니다."))
+                .getFiles();
+
+        FileEntity fileEntity = files.stream()
+                .filter(file -> Objects.equals(file.getId(), fileId))
+                .findAny()
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 파일을 찾을 수 없습니다."));
 
-        fileEntity.changeName(fileDto.getFileName());
-        fileEntity.changeExt(fileDto.getExt());
-        fileEntity.changeContent(fileDto.getContent());
-
-        fileRepository.save(fileEntity);
-
-        return FileDto.builder()
-                .fileId(fileEntity.getId())
-                .fileName(fileEntity.getName())
-                .ext(fileEntity.getExt())
-                .content(fileEntity.getContent())
-                .build();
+        s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(BUCKET_NAME)
+                        .key(fileEntity.getStorageFileId())
+                        .build(),
+                RequestBody.fromString(fileDto.content));
+        log.info("File.storageId: {}", fileEntity.getStorageFileId());
     }
 
     @Transactional
