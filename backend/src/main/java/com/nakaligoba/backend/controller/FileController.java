@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 public class FileController {
 
     private final FileService fileService;
-    private final RunFileService dockerService;
+    private final RunFileService runFileService;
 
     @GetMapping("/{id}")
     public ResponseEntity<FileDto> getFile(@PathVariable Long id) {
@@ -68,12 +68,12 @@ public class FileController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}/run")
+    @GetMapping("/{fileId}/run")
     public ResponseEntity<RunResponse> runFile(
-            @PathVariable Long id,
-            @RequestParam String language
+            @PathVariable Long projectId,
+            @PathVariable Long fileId
     ) {
-        String result = dockerService.run(id, language);
+        String result = runFileService.run(projectId, fileId);
         RunResponse response = new RunResponse(result);
         return ResponseEntity.ok(response);
     }

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -24,6 +26,9 @@ public class ProjectEntity extends BaseEntity {
 
     @Column(name = "storage_id", nullable = false)
     private String storageId;
+
+    @OneToMany(mappedBy = "files", fetch = FetchType.LAZY)
+    private List<FileEntity> files = new ArrayList<>();
 
     @Builder
     public ProjectEntity(String name, String description, String storageId) {
