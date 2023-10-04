@@ -19,13 +19,18 @@ import static org.springframework.http.HttpHeaders.*;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements Filter {
 
+    private final String[] ALLOW_ORIGINS = new String[]{
+            "http://static-resource-web-ide.s3-website-us-east-1.amazonaws.com/",
+            "http://localhost:3000"
+    };
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         // Set the allowed headers
-        httpResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000");
+        setAllowOrigin(httpResponse);
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
         httpResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
@@ -35,6 +40,15 @@ public class CorsFilter implements Filter {
             httpResponse.setStatus(HttpServletResponse.SC_OK);
         } else {
             chain.doFilter(request, response);
+        }
+    }
+
+    private void setAllowOrigin(HttpServletResponse httpResponse) {
+        String origin = httpResponse.getHeader("origin");
+        for (String allowOrigin : ALLOW_ORIGINS) {
+            if (allowOrigin.equals(origin)) {
+                httpResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, allowOrigin);
+            }
         }
     }
 

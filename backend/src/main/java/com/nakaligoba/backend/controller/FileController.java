@@ -5,58 +5,77 @@ import com.nakaligoba.backend.service.RunFileService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import com.nakaligoba.backend.service.FileService.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/file")
+@RequestMapping("/api/v1/projects/{projectId}/files")
 public class FileController {
 
     private final FileService fileService;
-    private final RunFileService dockerService;
+    private final RunFileService runFileService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<FileDto> getFile(@PathVariable Long id) {
-        FileDto fileDto = fileService.getFileById(id);
+    @GetMapping("/{fileId}")
+    public ResponseEntity<FileDto> readFile(
+            @PathVariable Long projectId,
+            @PathVariable Long fileId) {
+        FileDto fileDto = fileService.readFile(projectId, fileId);
         return ResponseEntity.ok(fileDto);
     }
 
     @PostMapping
-    public ResponseEntity<FileDto> saveFile(@Valid @RequestBody FileRequest request, @RequestParam Long projectId) {
-        FileDto fileDto = FileDto.builder()
+    public ResponseEntity<CreateFileResponse> saveFile(
+            @PathVariable Long projectId,
+            @Valid @RequestBody FileRequest request
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        String username = authentication.getName();
+        CreateFileDto dto = CreateFileDto.builder()
                 .fileName(request.getName())
                 .ext(request.getExt())
-                .storageFileId(request.getStorageFileId())
+                .userEmail("test@test.com")
+                .projectId(projectId)
                 .build();
+        log.info("Logged in Member email: {}", dto.getUserEmail());
 
-        FileDto savedFileDto = fileService.createFile(fileDto, projectId);
+        Long fileId = fileService.createFile(dto);
+        CreateFileResponse response = new CreateFileResponse(fileId);
 
-        return ResponseEntity.ok(savedFileDto);
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<FileDto> updateFile(@PathVariable Long id, @Valid @RequestBody FileRequest request) {
+    @PutMapping("/{fileId}")
+    public ResponseEntity<Void> updateFile(
+            @PathVariable Long projectId,
+            @PathVariable Long fileId,
+            @Valid @RequestBody FileRequest request
+    ) {
         FileDto fileDto = FileDto.builder()
                 .fileName(request.getName())
                 .ext(request.getExt())
                 .content(request.getContent())
                 .build();
 
-        FileDto updatedFileDto = fileService.updateFile(id, fileDto);
+        fileService.updateFile(projectId, fileId, fileDto);
 
-        return ResponseEntity.ok(updatedFileDto);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}/run")
+    @GetMapping("/{fileId}/run")
     public ResponseEntity<RunResponse> runFile(
-            @PathVariable Long id,
-            @RequestParam String language
+            @PathVariable Long projectId,
+            @PathVariable Long fileId
     ) {
-        String result = dockerService.run(id, language);
+        String result = runFileService.run(projectId, fileId);
         RunResponse response = new RunResponse(result);
         return ResponseEntity.ok(response);
     }
@@ -69,6 +88,11 @@ public class FileController {
         private final String ext;
         private final String storageFileId;
         private final String content;
+    }
+
+    @Data
+    static class CreateFileResponse {
+        private final Long id;
     }
 
     @Data

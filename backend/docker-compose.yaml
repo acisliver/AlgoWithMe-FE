@@ -1,0 +1,49 @@
+version: '1'
+
+services:
+  was:
+    image: rheodms123/web-ide
+    container_name: was
+    volumes:
+      - code:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+    networks:
+      - private
+    restart: unless-stopped
+
+  java-runner:
+    image: rheodms123/java-runner
+    container_name: java-runner
+    volumes:
+      - code:/code
+    command: ["tail", "-f" ,"/dev/null"]
+    networks:
+      - private
+
+  python3-runner:
+    image: rheodms123/python3-runner
+    container_name: python3-runner
+    volumes:
+      - code:/code
+    command: ["tail", "-f" ,"/dev/null"]
+    networks:
+      - private
+
+  node14-runner:
+    image: rheodms123/node14-runner
+    container_name: node14-runner
+    volumes:
+      - code:/code
+    command: ["tail", "-f" ,"/dev/null"]
+    networks:
+      - private
+
+volumes:
+  code:
+    name: code
+
+networks:
+  private:
+    driver: bridge

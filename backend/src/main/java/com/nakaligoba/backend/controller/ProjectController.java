@@ -1,7 +1,11 @@
 package com.nakaligoba.backend.controller;
 
 import com.nakaligoba.backend.service.ProjectService;
-import lombok.*;
+import com.nakaligoba.backend.service.ProjectService.CreateProjectDto;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +21,16 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<ProjectCreateResponse> createProject(@Valid @RequestBody ProjectCreateRequest request) {
-        ProjectCreateResponse response = projectService.create(request);
+    public ResponseEntity<ProjectCreateResponse> createProject(
+            @Valid @RequestBody ProjectCreateRequest request
+    ) {
+        String email = "test@test.com";
+        CreateProjectDto dto = CreateProjectDto.builder()
+                .email(email)
+                .name(request.name)
+                .description(request.description)
+                .build();
+        ProjectCreateResponse response = projectService.create(dto);
         return ResponseEntity.ok(response);
     }
 
@@ -29,9 +41,6 @@ public class ProjectController {
     }
 
     @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class ProjectCreateRequest {
         private String name;
         private String description;
@@ -42,7 +51,6 @@ public class ProjectController {
     @Builder
     public static class ProjectCreateResponse {
         private Long id;
-        private String storageId;
     }
 
     @Data
