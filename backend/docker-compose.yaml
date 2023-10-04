@@ -1,4 +1,4 @@
-version: '0.1'
+version: '1'
 
 services:
   was:
@@ -18,7 +18,7 @@ services:
     container_name: java-runner
     volumes:
       - code:/code
-    command: tail -f /dev/null
+    command: ["tail", "-f" ,"/dev/null"]
     networks:
       - private
 
@@ -27,7 +27,7 @@ services:
     container_name: python3-runner
     volumes:
       - code:/code
-    command: tail - f /dev/null
+    command: ["tail", "-f" ,"/dev/null"]
     networks:
       - private
 
@@ -36,7 +36,7 @@ services:
     container_name: node14-runner
     volumes:
       - code:/code
-    command: tail - f /dev/null
+    command: ["tail", "-f" ,"/dev/null"]
     networks:
       - private
 
