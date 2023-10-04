@@ -68,6 +68,7 @@ public class ProjectService {
         List<ProjectEntity> entities = projectRepository.findAll();
         return entities.stream()
                 .map(entity -> ProjectListResponse.builder()
+                        .id(entity.getId())
                         .name(entity.getName())
                         .description(entity.getDescription())
                         .updatedAt(entity.getUpdatedAt())
