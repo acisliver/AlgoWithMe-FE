@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Tree from 'rc-tree';
 import 'rc-tree/assets/index.css';  
 import './index.css';
@@ -9,6 +9,7 @@ import Contextmenu from './Contextmenu';
 import { useContextMenu } from 'react-contexify'
 import TabSettings from './TabSettings';
 import Form from './Form';
+// import { INITIAL_TREE } from './INITIAL_TREE';
 // import Filesearch from './filesearch';
 
 const INTIIAL_TREE = [
@@ -30,7 +31,7 @@ const INTIIAL_TREE = [
 
 
 
-export default function Explorer({ selectedTab }) {
+export default function Explorer({ selectedTab,createModal,projectBtnHandler }) {
 //   const [searchValue, setSearchValue] = useState("");
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
@@ -42,7 +43,11 @@ export default function Explorer({ selectedTab }) {
   const [editingType, setEditingType] = useState(null);
   const [editing, setEditing] = useState(false);
 
-//   const searchChange = (e) => {setSearchValue(e.target.value);}
+
+
+
+  // const searchChange = (e) => {setSearchValue(e.target.value);}
+
   const toggleinput =() =>{
     setShowInput(prev => !prev)
   }
@@ -270,7 +275,7 @@ export default function Explorer({ selectedTab }) {
 } else if (selectedTab === 'tabSetting') {
   // tabSearch'를 클릭
   return (
-   <TabSettings/>
+   <TabSettings createModal={createModal} projectBtnHandler={projectBtnHandler}/>
   );
 }
 }
