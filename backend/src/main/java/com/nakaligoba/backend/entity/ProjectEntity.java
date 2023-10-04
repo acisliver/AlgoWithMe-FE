@@ -27,7 +27,7 @@ public class ProjectEntity extends BaseEntity {
     @Column(name = "storage_id", nullable = false)
     private String storageId;
 
-    @OneToMany(mappedBy = "files", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<FileEntity> files = new ArrayList<>();
 
     @Builder

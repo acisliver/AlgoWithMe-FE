@@ -27,7 +27,7 @@ public class MemberEntity extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "member_projects", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberProjectEntity> memberProjects = new ArrayList<>();
 
     @Builder
