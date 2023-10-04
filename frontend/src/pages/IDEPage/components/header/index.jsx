@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Button from "./components/Button";
 import ExeButton from "./components/ExeButton";
-import ProfileBadge from "../../../../components/ProfileBadge";
 import ProjectTitleButton from "./components/ProjectTitleButton";
 
 const index = (props) => {
@@ -33,7 +32,6 @@ const index = (props) => {
   return (
     <header className="flex justify-between py-2 px-4 bg-[#0F1524]">
       <div className="flex w-1/3">
-        <ProfileBadge />
       </div>
       <div className="flex w-1/5 justify-center">
         <ProjectTitleButton onProjectClick={props.onProjClick}/>
