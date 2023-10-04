@@ -76,27 +76,27 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
     // }
 
     const renameProject = async (editingId) =>{
-       setProjects(projects=> projects.map(
-        project=> project.id === editingId? { ...project, name: pjtName } : project
-       ))
-    try {const response = await projectService.putProject(editingId);
-    if (response.success){
-       setEditingId(null)
-    }else {
-        console.error('Project deletion failed:', response);
-    }
-    } catch (error) {
-    console.error('Error during project deletion:', error);
-    }
+        try {const response = await projectService.putProject(editingId);
+            if (response.success){
+                setProjects(projects=> projects.map(
+                project=> project.id === editingId? { ...project, name: pjtName } : project
+                ))
+                setEditingId(null)
+            }else {
+                console.error('Project update failed:', response);
+            }
+        } catch (error) {
+        console.error('Error during project update:', error);
+        }
     }
 
    
     
     const deleteProject = async (projectId) => {
-        const deletedProjects = projects.filter(project => project.id !== projectId);
         try {
             const response = await projectService.deleteProject(projectId); 
             if (response.success){ 
+                const deletedProjects = projects.filter(project => project.id !== projectId);
                 setProjects(deletedProjects);
             } else {
                 console.error('Project deletion failed:', response);
