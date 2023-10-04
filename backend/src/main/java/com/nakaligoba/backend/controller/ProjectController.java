@@ -56,6 +56,7 @@ public class ProjectController {
     @Data
     @Builder
     public static class ProjectListResponse {
+        private Long id;
         private String name;
         private String description;
         private LocalDateTime updatedAt;
