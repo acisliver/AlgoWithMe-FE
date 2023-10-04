@@ -23,9 +23,11 @@ public class FileController {
     private final FileService fileService;
     private final RunFileService runFileService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<FileDto> getFile(@PathVariable Long id) {
-        FileDto fileDto = fileService.getFileById(id);
+    @GetMapping("/{fileId}")
+    public ResponseEntity<FileDto> readFile(
+            @PathVariable Long projectId,
+            @PathVariable Long fileId) {
+        FileDto fileDto = fileService.readFile(projectId, fileId);
         return ResponseEntity.ok(fileDto);
     }
 

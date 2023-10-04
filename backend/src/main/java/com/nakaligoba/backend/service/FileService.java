@@ -1,8 +1,10 @@
 package com.nakaligoba.backend.service;
 
+import com.nakaligoba.backend.domain.ProjectFile;
 import com.nakaligoba.backend.entity.FileEntity;
 import com.nakaligoba.backend.entity.MemberEntity;
 import com.nakaligoba.backend.entity.ProjectEntity;
+import com.nakaligoba.backend.entity.mapper.Mapper;
 import com.nakaligoba.backend.repository.FileRepository;
 import com.nakaligoba.backend.repository.MemberRepository;
 import com.nakaligoba.backend.repository.ProjectRepository;
@@ -11,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -27,6 +32,7 @@ public class FileService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final S3Client s3Client;
+    private final Mapper<ProjectFile, FileEntity> fileMapper;
     private final String BUCKET_NAME = "web-ide-projects";
 
     @Transactional
@@ -85,24 +91,31 @@ public class FileService {
     }
 
     @Transactional
-    public FileDto getFileById(Long id) {
-        return fileRepository.findById(id)
-                .map(file -> FileDto.builder()
-                        .fileId(file.getId())
-                        .fileName(file.getName())
-                        .ext(file.getExt())
-                        .content(file.getContent())
-                        .build())
+    public FileDto readFile(Long projectId, Long fileId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NoSuchElementException("해당 프로젝트를 찾을 수 없습니다."));
+        List<FileEntity> files = projectEntity.getFiles();
+        FileEntity fileEntity = files.stream()
+                .filter(file -> Objects.equals(file.getId(), fileId))
+                .findAny()
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 파일을 찾을 수 없습니다."));
-    }
 
-    public String runCode(Long id) {
-        FileEntity file = fileRepository.findById(id).orElseThrow(()
-                -> new NoSuchElementException("해당 ID의 파일을 찾을 수 없습니다."));
-        String content = file.getContent();
-        // ..
+        String key = projectEntity.getStorageId() + fileEntity.getStorageFileId();
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(key)
+                .build();
 
-        return content;
+        byte[] objectBytes = s3Client.getObject(getObjectRequest, ResponseTransformer.toBytes())
+                .asByteArray();
+
+        ProjectFile projectFile = fileMapper.entityToDomain(fileEntity);
+
+        return FileDto.builder()
+                .fileName(projectFile.getName())
+                .ext(projectFile.getLanguage().getExt())
+                .content(new String(objectBytes, StandardCharsets.UTF_8))
+                .build();
     }
 
     @Data
@@ -110,7 +123,6 @@ public class FileService {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class FileDto {
-        private Long fileId;
         private String fileName;
         private String ext;
         private String content;
