@@ -15,7 +15,7 @@ const index = () => {
   };
 
   return (
-    <div>
+    <div className="m-0 p-0 bg-[#1D2332] min-h-screen">
       {onModalClick && <Modal />}
       <div className="flex flex-col h-screen relative">
         <Header onProjClick={projectBtnHandler} />
