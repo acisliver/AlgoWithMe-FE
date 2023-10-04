@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const ProfileBadge = () => {
+const ProfileBadge = (props) => {
   const [backgroundColor, setBackgroundColor] = useState("");
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const ProfileBadge = () => {
   return (
     <div className="w-10 h-10 text-white flex items-center justify-center rounded-full" 
     style={{ backgroundColor }}>
-      G
+      {props.name}
     </div>
   );
 };
