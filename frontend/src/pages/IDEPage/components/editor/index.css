@@ -4,9 +4,8 @@
   justify-content: space-between;
   margin: 0px;
   width: auto;
-  height: 60%;
   visibility: visible;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 ul#north_tab.nav_tabs {
@@ -65,4 +64,3 @@ ul#north_tab.nav_tabs::-webkit-scrollbar-thumb:hover {
 body.no-scroll {
   overflow: hidden;
 }
-
