@@ -43,7 +43,7 @@ const index = (props) => {
   useEffect(() => {
     if (openChatroom) {
       const websocket = new WebSocket("ws://50.19.246.89:8080/ws/chat");
-      setWs(websocket);
+      setWs(websocket);ㅂ
 
       websocket.onmessage = (event) => {
         const receivedMessage = JSON.parse(event.data);
@@ -52,16 +52,28 @@ const index = (props) => {
       };
 
       websocket.onopen = () => {
-        const enterMessage = createMessageForm("User entered the chat", displayName,"ENTER");
+        const enterMessage = createMessageForm("User entered the chat", displayName, "ENTER");
         websocket.send(JSON.stringify(enterMessage));
       };
 
-      return () => {
+      // beforeunload 이벤트 핸들러 추가
+      const handleBeforeUnload = (event) => {
         if (websocket && websocket.readyState === WebSocket.OPEN) {
-          const exitMessage = createMessageForm("User left the chat", displayName,"EXIT");
+          const exitMessage = createMessageForm("User left the chat", displayName, "EXIT");
+          websocket.send(JSON.stringify(exitMessage));
+        }
+      };
+
+      window.addEventListener('beforeunload', handleBeforeUnload);
+
+      // 클린업 함수에서 beforeunload 이벤트 리스너 제거 및 웹소켓 종료 로직
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+          const exitMessage = createMessageForm("User left the chat", displayName, "EXIT");
           websocket.send(JSON.stringify(exitMessage));
 
-          // Wait for a confirmation of message delivery before closing (or a timeout)
           const confirmClose = setTimeout(() => {
             websocket.close();
           }, 1000);
@@ -74,7 +86,8 @@ const index = (props) => {
         }
       };
     }
-  }, [openChatroom]);
+  }, [openChatroom, displayName]);
+
 
 
 // 메시지 전송 로직
