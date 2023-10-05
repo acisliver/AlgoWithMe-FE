@@ -27,7 +27,7 @@ const style = {
 
 
 
-export default function Index({onProjClick,modal,setModal,createModal}) {
+export default function Index({onProjClick,modal,setModal,createModal, handlePjtClick}) {
     const [open, setOpen] = React.useState(true);
     const [projects,setProjects] =React.useState([])
     const [editingId, setEditingId] = React.useState(null);
@@ -188,10 +188,10 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                         </div>
                     </Typography>
                     <hr className='mt-3'/>
-                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px'}}>
+                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px', overflow:'auto',overflowX:'hidden'}}>
                      {projects.map((project)=>(
                         <div key={project.id} className='flex  py-4 hover:bg-[#46425e] ' style={{paddingLeft:'30px',fontSize:'22px'}} >
-                            <div className='flex' >
+                            <div className='flex' onClick={editingId !== project.id ? () => handlePjtClick(project.id) : undefined} >
                                 <div style={{width:'70px'}}>
                                     {/* {templateIcon(project.template)} */}
                                 </div>
@@ -211,7 +211,7 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                 </div>
                                 <span style={{width:'150px'}} className='flex justify-center' >{project.updatedAt.slice(0,10)}</span>
                                 <span className="flex" style={{width:'360px', marginLeft:'150px'}}>{project.collaborators.map(c => (
-                                <ProfileBadge key={c.id} name={c.name.slice(0, 1)} />
+                                <ProfileBadge key={c.id} name={c.name.slice(-1)} />
                                     ))}
                                 </span>
                             </div>
@@ -243,8 +243,6 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                         <div className=' bg-white text-black rounded-2xl p-4 flex flex-col' style={{width : '230px', height:'475px'}}>
                                             <button  className={`flex p-1 ${template === 'Java' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}  onClick={() => handleTemplateClick('Java')}>Java</button>
                                             <button className={`flex p-1 ${template === 'JavaScript' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('JavaScript')}>JavaScript</button>
-                                            <button  className={`flex p-1 ${template === 'C' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('C')}>C</button>
-                                            <button className={`flex p-1 ${template === 'C++' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('C++')}>C++</button>
                                             <button className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Python')}>Python</button>
                                         </div>
                                         <div style={{width:'1000px', color:'black', display:'flex', flexDirection:'column', alignItems:'center'}}>

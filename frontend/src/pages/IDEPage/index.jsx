@@ -19,6 +19,10 @@ const index = () => {
   const createModal= ()=> {
     setModal((prev)=>!prev);
   }
+  const handlePjtClick=(id)=>{
+    projectBtnHandler(false)
+
+}
 
 
   return (
@@ -28,6 +32,7 @@ const index = () => {
                         modal ={modal} 
                         setModal={setModal} 
                         createModal={createModal}
+                        handlePjtClick={handlePjtClick}
                   
                         />}
       <div className="flex flex-col h-screen relative">
