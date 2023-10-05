@@ -4,6 +4,7 @@ import com.nakaligoba.backend.service.ProjectService;
 import com.nakaligoba.backend.service.ProjectService.CreateProjectDto;
 import com.nakaligoba.backend.service.ProjectService.UpdateProjectDto;
 import com.nakaligoba.backend.service.ReadProjectService;
+import com.nakaligoba.backend.utils.JwtUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ReadProjectService readProjectService;
+    private final JwtUtils jwtUtils;
 
     @PostMapping
     public ResponseEntity<ProjectCreateResponse> createProject(
@@ -44,7 +46,8 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ReadProjectDirectoryResponse> readProjectDirectory(@PathVariable Long id) {
-        List<ReadProjectService.Node> node = readProjectService.readProjectDirectory(id);
+        String email = jwtUtils.getEmailFromSpringSession();
+        List<ReadProjectService.Node> node = readProjectService.readProjectDirectory(id, email);
         ReadProjectDirectoryResponse readProjectDirectoryResponse = new ReadProjectDirectoryResponse(node);
         return ResponseEntity.ok(readProjectDirectoryResponse);
     }

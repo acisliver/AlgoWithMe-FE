@@ -1,6 +1,8 @@
 package com.nakaligoba.backend.service;
 
 import com.nakaligoba.backend.entity.FileEntity;
+import com.nakaligoba.backend.entity.MemberEntity;
+import com.nakaligoba.backend.repository.MemberProjectRepository;
 import com.nakaligoba.backend.repository.MemberRepository;
 import com.nakaligoba.backend.repository.ProjectRepository;
 import lombok.*;
@@ -15,12 +17,13 @@ import java.util.stream.Collectors;
 @Service
 public class ReadProjectService {
 
-    private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
+    private final MemberProjectRepository memberProjectRepository;
 
-    public List<Node> readProjectDirectory(Long id) {
-        List<FileEntity> files = projectRepository.findById(id)
-                .orElseThrow(NoSuchElementException::new)
+    public List<Node> readProjectDirectory(Long id, String email) {
+        MemberEntity member = memberRepository.findByEmail(email);
+        List<FileEntity> files = memberProjectRepository.findByMemberAndProjectId(member, id)
+                .getProject()
                 .getFiles();
 
         List<Node> nodes = new ArrayList<>();
