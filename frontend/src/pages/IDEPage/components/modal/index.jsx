@@ -188,7 +188,7 @@ export default function Index({onProjClick,modal,setModal,createModal, handlePjt
                         </div>
                     </Typography>
                     <hr className='mt-3'/>
-                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px', overflow:'auto',overflowX:'hidden'}}>
+                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px', overflow:'auto'}}>
                      {projects.map((project)=>(
                         <div key={project.id} className='flex  py-4 hover:bg-[#46425e] ' style={{paddingLeft:'30px',fontSize:'22px'}} >
                             <div className='flex' onClick={editingId !== project.id ? () => handlePjtClick(project.id) : undefined} >
@@ -210,7 +210,7 @@ export default function Index({onProjClick,modal,setModal,createModal, handlePjt
                                     )}
                                 </div>
                                 <span style={{width:'150px'}} className='flex justify-center' >{project.updatedAt.slice(0,10)}</span>
-                                <span className="flex" style={{width:'360px', marginLeft:'150px'}}>{project.collaborators.map(c => (
+                                <span className="flex" style={{width:'300px', marginLeft:'150px'}}>{project.collaborators.map(c => (
                                 <ProfileBadge key={c.id} name={c.name.slice(-1)} />
                                     ))}
                                 </span>

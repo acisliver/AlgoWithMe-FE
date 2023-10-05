@@ -9,24 +9,26 @@ import Contextmenu from './Contextmenu';
 import { useContextMenu } from 'react-contexify'
 import TabSettings from './TabSettings';
 import Form from './Form';
+import * as fileService from '../../../../service/fileService'
+
 // import Filesearch from './filesearch';
 
-// const INTIIAL_TREE = [
-//   {
-//     key: "0-1",
-//     title: "root",
-//     type : 'folder',
-//     children: [ { key: '0-1-1', title: 'index.html', type: 'html' }]
-//   },
-//   {
-//     key: '0-2',
-//     title: 'Node1',
-//     type : 'folder',
-//     children: [ { key: '0-2-1', title: 'index.java', type: 'java' }
+const INTIIAL_TREE = [
+  {
+    key: "1",
+    title: "root",
+    type : 'folder',
+    children: [ { key: '2', title: 'index.html', type: 'html' }]
+  },
+  {
+    key: '3',
+    title: 'Node1',
+    type : 'folder',
+    children: [ { key: '4', title: 'index.java', type: 'java' }
      
-//     ]
-//   }
-// ];
+    ]
+  }
+];
 
 
 
@@ -34,18 +36,18 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
 //   const [searchValue, setSearchValue] = useState("");
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
-  const [tree,setTree] = useState(projectStructure);
+  const [tree,setTree] = useState(INTIIAL_TREE);
   const [selectedFolderKey, setSelectedFolderKey] = useState(null);
   const [creatingItemType, setCreatingItemType] = useState(null);
   const [editingKey, setEditingKey] = useState(null);
+  const [lastKey, setLastKey] = useState(50);
   const [editingValue, setEditingValue] = useState(''); 
   const [editingType, setEditingType] = useState(null);
   const [editing, setEditing] = useState(false);
 
-
-  useEffect(() => {
-    setTree(projectStructure);
-  }, [projectStructure]);
+  // useEffect(() => {
+  //   setTree(projectStructure);
+  // }, [projectStructure]);
 
 
   // const searchChange = (e) => {setSearchValue(e.target.value);}
@@ -95,13 +97,30 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
   };
   
   const onFolderClick = (key) => {
+    console.log(selectedFolderKey)
     setSelectedFolderKey(key);
   }
+
+  // const createFile = (fileName) => {
+  //   const fileType = determineFileType(fileName);
+  //   const newFile = {
+  //     key: selectedFolderKey ? `${selectedFolderKey}-${Date.now()}` : `${Date.now()}`,
+  //     title: fileName,
+  //     type: fileType,
+  //   };
+  //   console.log("Creating file:", newFile); 
+  //   if (!selectedFolderKey) {
+  //     setTree(prevData => [...prevData, newFile]);
+  // } else {
+  //   setTree(prevData => addNodeRecursive(prevData, selectedFolderKey, newFile));
+  //     }
+  //     toggleinput();
+  //   }
 
   const createFile = (fileName) => {
     const fileType = determineFileType(fileName);
     const newFile = {
-      key: selectedFolderKey ? `${selectedFolderKey}-${Date.now()}` : `${Date.now()}`,
+      key: `${lastKey}`,
       title: fileName,
       type: fileType,
     };
@@ -112,11 +131,43 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
     setTree(prevData => addNodeRecursive(prevData, selectedFolderKey, newFile));
       }
       toggleinput();
+      setLastKey(prev=>prev+1)
     }
+
+
+  // const createFile = async (fileName)=>{
+  // const fileType = determineFileType(fileName);
+  
+  //   try{ 
+  //     const response = await fileService.createFile(fileName)
+  //     const newFile = {
+  //       key: selectFolderKey? lastkey
+  //     }
+  //   }catch(error){
+  //     console.error(error)
+  //   }
+  // }
+
+//   const createFolder = (folderName) => {
+//     const newFolder = {
+//     key: selectedFolderKey ? `${selectedFolderKey}-${Date.now()}` : `${Date.now()}`,
+//     title: folderName,
+//     type: 'folder',
+//     children: []
+//   };
+//   console.log("Creating folder:", newFolder); 
+//     if (!selectedFolderKey) {
+//     setTree(prevData => [...prevData, newFolder]);
+//   } else {
+//     setTree(prevData => 
+//       addNodeRecursive(prevData, selectedFolderKey, newFolder));
+//   }
+//     toggleinput();
+// }
 
   const createFolder = (folderName) => {
     const newFolder = {
-    key: selectedFolderKey ? `${selectedFolderKey}-${Date.now()}` : `${Date.now()}`,
+    key: lastKey,
     title: folderName,
     type: 'folder',
     children: []
@@ -129,11 +180,15 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
       addNodeRecursive(prevData, selectedFolderKey, newFolder));
   }
     toggleinput();
+    setLastKey(prev=>prev+1)
 }
 
   const addNodeRecursive = (tree, targetKey, newNode) => {
     return tree.map(node => {
       if (node.key === targetKey) {
+        if(!node.children){
+          return node  
+        }
         return {
           ...node,
           children: [...node.children, newNode],
@@ -153,7 +208,8 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
     e.preventDefault();
     if (creatingItemType === 'file') {
       createFile(value);
-    } else if (creatingItemType === 'folder') {
+    } 
+    else if (creatingItemType === 'folder') {
       createFolder(value);
     }
     setValue("")
