@@ -1,5 +1,6 @@
 package com.nakaligoba.backend.service;
 
+import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.nakaligoba.backend.entity.MemberEntity;
 import com.nakaligoba.backend.entity.MemberProjectEntity;
 import com.nakaligoba.backend.entity.ProjectEntity;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,11 +84,51 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void deleteProject(Long projectId, String email) {
+        MemberEntity member = memberRepository.findByEmail(email);
+        MemberProjectEntity memberProject = memberProjectRepository.findByMemberAndProjectId(member, projectId);
+
+        if (memberProject == null) {
+            throw new NoSuchElementException("프로젝트를 찾을 수 없습니다.");
+        }
+        if (memberProject.getRole() != Role.OWNER) {
+            throw new UnauthorizedException("프로젝트 삭제 권한이 없습니다.");
+        }
+
+        projectRepository.deleteById(projectId);
+    }
+
+    @Transactional
+    public void updateProject(UpdateProjectDto dto) {
+        ProjectEntity project = projectRepository.findById(dto.getProjectId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        project.changeProjectName(dto.getName());
+        project.changeDescription(dto.getDescription());
+        projectRepository.save(project);
+    }
+
     @Data
     @Builder
     public static class CreateProjectDto {
         private final String name;
         private final String description;
         private final String email;
+    }
+
+    @Data
+    @Builder
+    public static class DeleteProjectDto {
+        private final Long projectId;
+        private final String userEmail;
+    }
+
+    @Data
+    @Builder
+    public static class UpdateProjectDto {
+        private final Long projectId;
+        private final String name;
+        private final String description;
     }
 }
