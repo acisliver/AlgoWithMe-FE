@@ -1,14 +1,10 @@
 spring:
+  profiles:
+    default: local
+
   output:
     ansi:
       enabled: always
-
-  # DB
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USER_ID}
-    password: ${DB_USER_PW}
-    driver-class-name: ${DB_DRIVER_CLASS_NAME}
 
   # SMTP
   mail:
@@ -27,3 +23,13 @@ jwt:
   claim: ${CLAIM}
   secret: ${JWT_SECRET_KEY}
   token-validity-in-seconds: ${JWT_VALID_TIME}
+
+cloud:
+  aws:
+    region:
+      static: us-east-1
+    stack:
+      auto: false
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}

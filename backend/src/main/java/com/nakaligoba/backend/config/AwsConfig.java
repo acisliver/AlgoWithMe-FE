@@ -16,7 +16,7 @@ public class AwsConfig {
     public S3Client s3Client(
             @Value("${cloud.aws.credentials.access-key}") String accessKey,
             @Value("${cloud.aws.credentials.secret-key}") String secretKey,
-            @Value("${aws.region}") String region
+            @Value("${cloud.aws.region.static}") String region
     ) {
         AwsCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
         return S3Client.builder()
