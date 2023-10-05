@@ -82,7 +82,7 @@ public class FileController {
     }
 
     @DeleteMapping("/{fileId}")
-    public ResponseEntity<?> deleteFile(
+    public ResponseEntity<Void> deleteFile(
             @PathVariable Long projectId,
             @PathVariable Long fileId
     ) {
