@@ -42,7 +42,7 @@ const index = (props) => {
 // 웹소켓 관련 코드
   useEffect(() => {
     if (openChatroom) {
-      const websocket = new WebSocket("ws://localhost:8080/ws/chat");
+      const websocket = new WebSocket("ws://50.19.246.89:8080/ws/chat");
       setWs(websocket);
 
       websocket.onmessage = (event) => {
