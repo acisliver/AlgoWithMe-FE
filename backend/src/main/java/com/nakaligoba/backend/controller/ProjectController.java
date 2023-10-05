@@ -2,6 +2,7 @@ package com.nakaligoba.backend.controller;
 
 import com.nakaligoba.backend.service.ProjectService;
 import com.nakaligoba.backend.service.ProjectService.CreateProjectDto;
+import com.nakaligoba.backend.service.ProjectService.UpdateProjectDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,38 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateProject(
+            @PathVariable Long id,
+            @RequestBody ProjectUpdateRequest request
+    ) {
+        UpdateProjectDto dto = UpdateProjectDto.builder()
+                .projectId(id)
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
+        projectService.updateProject(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
+        String email = "test@test.com";
+        projectService.deleteProject(id, email);
+        return ResponseEntity.ok().build();
+    }
+
     @Data
     public static class ProjectCreateRequest {
         private String name;
         private String description;
         private String template;
+    }
+
+    @Data
+    public static class ProjectUpdateRequest {
+        private String name;
+        private String description;
     }
 
     @Data
