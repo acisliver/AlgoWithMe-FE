@@ -39,3 +39,13 @@ export const deleteProject = async (id)=>{
         return error;
     }
 }
+
+export const getProjectStructure = async (projectId) => {
+    try {
+      const response = await apiUtils.read(`/v1/projects/${projectId} 수정필요`);
+      return response;
+    } catch (error) {
+      console.error('Error getting project structure:', error);
+      return error;
+    }
+  };

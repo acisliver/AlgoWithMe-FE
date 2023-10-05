@@ -9,33 +9,32 @@ import Contextmenu from './Contextmenu';
 import { useContextMenu } from 'react-contexify'
 import TabSettings from './TabSettings';
 import Form from './Form';
-// import { INITIAL_TREE } from './INITIAL_TREE';
 // import Filesearch from './filesearch';
 
-const INTIIAL_TREE = [
-  {
-    key: "0-1",
-    title: "root",
-    type : 'folder',
-    children: [ { key: '0-1-1', title: 'index.html', type: 'html' }]
-  },
-  {
-    key: '0-2',
-    title: 'Node1',
-    type : 'folder',
-    children: [ { key: '0-2-1', title: 'index.java', type: 'java' }
+// const INTIIAL_TREE = [
+//   {
+//     key: "0-1",
+//     title: "root",
+//     type : 'folder',
+//     children: [ { key: '0-1-1', title: 'index.html', type: 'html' }]
+//   },
+//   {
+//     key: '0-2',
+//     title: 'Node1',
+//     type : 'folder',
+//     children: [ { key: '0-2-1', title: 'index.java', type: 'java' }
      
-    ]
-  }
-];
+//     ]
+//   }
+// ];
 
 
 
-export default function Explorer({ selectedTab,createModal,projectBtnHandler }) {
+export default function Explorer({ selectedTab,createModal,projectBtnHandler,projectStructure }) {
 //   const [searchValue, setSearchValue] = useState("");
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
-  const [tree,setTree] = useState(INTIIAL_TREE);
+  const [tree,setTree] = useState(projectStructure);
   const [selectedFolderKey, setSelectedFolderKey] = useState(null);
   const [creatingItemType, setCreatingItemType] = useState(null);
   const [editingKey, setEditingKey] = useState(null);
@@ -44,6 +43,9 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler }) 
   const [editing, setEditing] = useState(false);
 
 
+  useEffect(() => {
+    setTree(projectStructure);
+  }, [projectStructure]);
 
 
   // const searchChange = (e) => {setSearchValue(e.target.value);}
