@@ -118,6 +118,20 @@ public class FileService {
                 .build();
     }
 
+    @Transactional
+    public void deleteFile(Long projectId, Long fileId) {
+        List<FileEntity> files = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NoSuchElementException("해당 프로젝트를 찾을 수 없습니다."))
+                .getFiles();
+
+        FileEntity fileEntity = files.stream()
+                .filter(file -> Objects.equals(file.getId(), fileId))
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("해당 ID의 파일을 찾을 수 없습니다."));
+
+        fileRepository.delete(fileEntity);
+    }
+
     @Data
     @Builder
     @AllArgsConstructor
