@@ -26,6 +26,7 @@ public class ChatMessageService {
     @PostConstruct
     private void init() {
         chatRooms = new LinkedHashMap<>();
+        createRoom("AllChannel");
     }
 
     public List<ChatRoom> findAllRoom() {
