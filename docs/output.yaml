@@ -287,10 +287,8 @@ paths:
               properties:
                 name:
                   type: string
-                  description: 파일명
-                ext:
-                  type: string
-                  description: 확장자명
+                  description: 파일명과 확장자명
+                  example: text.txt
       responses:
         '200':
           description: 성공
