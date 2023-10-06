@@ -1,8 +1,8 @@
 import apiUtils from "./apiUtils";
 
-export const createFile = async (id, fileName) => {
+export const createFile = async (id, fileName,path) => {
     try {
-        const response = await apiUtils.create(`/v1/projects/${id}/files`,{name:fileName});
+        const response = await apiUtils.create(`/v1/projects/${id}/files`,{name:fileName, path:path});
         return response;
     } catch (error) {
         console.error('Error creating file:', error);
@@ -20,9 +20,9 @@ export const getFile = async (projectId,fileId) => {
     }
 }
 
-export const deleteFile = async (id) =>{
+export const deleteFile = async (id,filedId) =>{
     try{
-        const response = await apiUtils.del(`v1/projects/${id}/files`);
+        const response = await apiUtils.del(`v1/projects/${id}/files/${filedId}`);
         return response``
     }catch(error){
         console.error('Error deleting file:', error);
