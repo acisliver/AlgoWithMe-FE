@@ -1,20 +1,30 @@
 import { useState } from "react";
 import Explorer from "../file_explorer/index";
+import ToggleButton from '@mui/material/ToggleButton';
 
 
-
-const Index = ({createModal,projectBtnHandler,projectStructure}) => {
+const Index = ({createModal,projectBtnHandler,projectStructure, isConsoleVisible, toggleConsoleVisibility, setTabFilesVisible}) => {
   const [selectedTab, setSelectedTab] = useState(null);
 
   const tabHandleClick = (tabName) => {
     setSelectedTab((prevTab) => {
       if (prevTab !== tabName) {
+        setTabFilesVisible(tabName === 'tabFiles'); // 여기에서 상태를 업데이트
         return tabName;
       } else {
+        setTabFilesVisible(false); // 탭이 선택 취소되면 false
         return "";
       }
     });
   };
+
+  const [consoleVisible, setConsoleVisible] = useState(true);
+
+  const handleConsoleToggle = () => {
+    setConsoleVisible(!consoleVisible); // 현재 가시성 상태를 반전
+    toggleConsoleVisibility(); // 외부에서 제공된 콘솔 토글 함수 호출
+};
+
 
   return (
     <>
@@ -37,6 +47,37 @@ const Index = ({createModal,projectBtnHandler,projectStructure}) => {
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
   </div>
+  <div>
+  <ToggleButton
+    color="primary"
+    value={isConsoleVisible}
+    onChange={toggleConsoleVisibility}
+    aria-label="console visibility"
+    sx={{ 
+        width: '44px', 
+        height: '44px', 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: consoleVisible ? '5px' : '5px',
+    }}  
+>
+    <svg 
+        height="44" 
+        width="44" 
+        viewBox="0 0 16 16" 
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ verticalAlign: 'middle'}}
+    >
+        <path 
+            fillRule="evenodd" 
+            clipRule="evenodd" 
+            d="M7.5 11.182H11.5V9.881H7.5V11.182ZM3.5 10.262L5.162 8.6L3.5 6.938L4.42 6.019L7 8.6L4.42 11.182L3.5 10.262ZM2.8 12.2H13.2V5H2.8V12.2ZM1.5 2.5V3.25V5V13.5H14.5V5V3.25V2.5H1.5Z"
+            fill={isConsoleVisible ? 'white' : '#666B75'}
+        ></path>
+                        </svg>
+                    </ToggleButton>
+                </div>
 </div>
 <Explorer selectedTab={selectedTab} createModal={createModal} projectBtnHandler={projectBtnHandler} projectStructure={projectStructure}/>
 </>
