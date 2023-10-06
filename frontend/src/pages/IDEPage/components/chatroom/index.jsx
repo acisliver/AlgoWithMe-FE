@@ -6,7 +6,7 @@ const index = (props) => {
   const [openChatroom, setOpenChatroom] = useState(false);
   const [messages, setMessages] = useState([]);
   const messageListRef = useRef(null); // Create a ref
-  const [displayName, setDisplayName] = useState("철수");
+  const [displayName, setDisplayName] = useState(props.userName);
 
   const clickHandler = () => setOpenChatroom((prev) => !prev);
   const nameChangeHandler = (event) => setDisplayName(event.target.value);
