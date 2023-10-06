@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.ws.rs.Path;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -78,6 +79,15 @@ public class FileController {
         String result = runFileService.run(projectId, fileId);
         RunResponse response = new RunResponse(result);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{fileId}")
+    public ResponseEntity<Void> deleteFile(
+            @PathVariable Long projectId,
+            @PathVariable Long fileId
+    ) {
+        fileService.deleteFile(projectId, fileId);
+        return ResponseEntity.ok().build();
     }
 
     @Data
