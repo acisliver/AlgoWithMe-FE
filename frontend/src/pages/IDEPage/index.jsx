@@ -14,7 +14,7 @@ import * as projectService from '../../service/projectService'
 const index = () => {
   const [onModalClick, setOnModalClick] = useState(true);
   const [modal, setModal] = React.useState(false);
-  const [projectStructure, setProjectStructure] = React.useState([]);
+  const [projectStructure, setProjectStructure] = React.useState({data: []});
   const [onInviteTap, setOnInviteTap] = useState(false);
 
   const inviteClickHandler = () => {
@@ -22,6 +22,7 @@ const index = () => {
       return !prev;
     });
   };
+
 
   const projectBtnHandler = (isOn) => {
     setOnModalClick(isOn);
@@ -35,6 +36,7 @@ const index = () => {
       const response = await projectService.getProjectStructure(projectId);
       if(response.success){
         setProjectStructure(response.data)
+        console.log(response.data)
         projectBtnHandler(false)
       }else{
        console.error(response.error);
@@ -102,7 +104,7 @@ const index = () => {
             <Sidebar
               createModal={createModal}
               projectBtnHandler={projectBtnHandler}
-              projectStructure={projectStructure}
+              projectStructure={projectStructure && projectStructure.data ? projectStructure.data : {}}
               toggleConsoleVisibility={toggleConsoleVisibility}
               setTabFilesVisible={setIsTabFilesVisible}
               isConsoleVisible={isConsoleVisible}

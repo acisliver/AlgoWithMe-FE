@@ -13,30 +13,35 @@ import * as fileService from '../../../../service/fileService'
 
 // import Filesearch from './filesearch';
 
-const INTIIAL_TREE = [
-  {
-    key: "1",
-    title: "root",
-    type : 'folder',
-    children: [ { key: '2', title: 'index.html', type: 'html' }]
-  },
-  {
-    key: '3',
-    title: 'Node1',
-    type : 'folder',
-    children: [ { key: '4', title: 'index.java', type: 'java' }
-     
-    ]
-  }
-];
 
+// const INTIIAL_TREE = [
+//   {
+//       "id": null,
+//       "key": "0",
+//       "title": "src",
+//       "path": "src",
+//       "type": "folder",
+//       "content": null,
+//       "children": [
+//           {
+//               "id": "2",
+//               "key": "1",
+//               "title": "Main.java",
+//               "path": "src/Main.java",
+//               "type": "java",
+//               "content": "",
+//               "children": []
+//           }
+//       ]
+//   }
+// ];
 
 
 export default function Explorer({ selectedTab,createModal,projectBtnHandler,projectStructure }) {
 //   const [searchValue, setSearchValue] = useState("");
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
-  const [tree,setTree] = useState(INTIIAL_TREE);
+  const [tree,setTree] = useState(projectStructure);
   const [selectedFolderKey, setSelectedFolderKey] = useState(null);
   const [creatingItemType, setCreatingItemType] = useState(null);
   const [editingKey, setEditingKey] = useState(null);
@@ -45,9 +50,12 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
   const [editingType, setEditingType] = useState(null);
   const [editing, setEditing] = useState(false);
 
-  // useEffect(() => {
-  //   setTree(projectStructure);
-  // }, [projectStructure]);
+
+  useEffect(() => {
+    if (projectStructure) {
+    setTree(projectStructure);
+    }
+  }, [projectStructure]);
 
 
   // const searchChange = (e) => {setSearchValue(e.target.value);}

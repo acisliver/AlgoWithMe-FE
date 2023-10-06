@@ -4,7 +4,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 
 
 const Index = ({createModal,projectBtnHandler,projectStructure, isConsoleVisible, toggleConsoleVisibility, setTabFilesVisible}) => {
-  const [selectedTab, setSelectedTab] = useState(null);
+  const [selectedTab, setSelectedTab] = useState('tabFiles');
 
   const tabHandleClick = (tabName) => {
     setSelectedTab((prevTab) => {

@@ -20,9 +20,9 @@ export const getProjects = async () => {
     }
   };
 
-export const putProject = async (id) => {
+export const putProject = async (id, name,description) => {
     try {
-        const response = await apiUtils.update(`/v1/projects/${id}`);
+        const response = await apiUtils.update(`/v1/projects/${id}`,{name,description});
         return response; 
     }catch(error) {
         console.error('Error updatting project', error);
@@ -32,7 +32,7 @@ export const putProject = async (id) => {
 
 export const deleteProject = async (id)=>{
     try {
-        const response = await apiUtils.update(`/v1/projects/${id}`);
+        const response = await apiUtils.del(`/v1/projects/${id}`);
         return response;
     }catch(error){
         console.error('Error deleting project', error);
@@ -42,7 +42,7 @@ export const deleteProject = async (id)=>{
 
 export const getProjectStructure = async (projectId) => {
     try {
-      const response = await apiUtils.read(`/v1/projects/${projectId} 수정필요`);
+      const response = await apiUtils.read(`/v1/projects/${projectId}`);
       return response;
     } catch (error) {
       console.error('Error getting project structure:', error);
