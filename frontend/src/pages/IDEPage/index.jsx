@@ -16,6 +16,13 @@ const index = () => {
   const [modal, setModal] = React.useState(false);
   const [projectStructure, setProjectStructure] = React.useState({data: []});
   const [onInviteTap, setOnInviteTap] = useState(false);
+  const [user, setUser] = useState(null);
+  const [editorHeight, setEditorHeight] = useState("60vh");
+  const [isConsoleVisible, setIsConsoleVisible] = useState(true);
+  const [isTabFilesVisible, setIsTabFilesVisible] = useState(false);
+  const [editorWidth, setEditorWidth] = useState("100%");
+  const [projects,setProjects] =React.useState([])
+  const [selectedProject, setSelectedProject] =useState()
 
   const inviteClickHandler = () => {
     setOnInviteTap((prev) => {
@@ -38,15 +45,21 @@ const index = () => {
         setProjectStructure(response.data)
         console.log(response.data)
         projectBtnHandler(false)
+
+        const selectedProject = projects.find(p => p.id === projectId);
+      if (selectedProject) {
+        setSelectedProject(selectedProject);
+      }
       }else{
        console.error(response.error);
       }  
     } catch (error) {
       console.error(error)
-    } 
+    }
 }
+console.log(selectedProject)
 
-  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -60,11 +73,6 @@ const index = () => {
     fetchUserData();
   }, []);
 
-  //버튼 클릭 시 크기 조절
-  const [editorHeight, setEditorHeight] = useState("60vh");
-  const [isConsoleVisible, setIsConsoleVisible] = useState(true);
-  const [isTabFilesVisible, setIsTabFilesVisible] = useState(false);
-  const [editorWidth, setEditorWidth] = useState("100%");
 
   useEffect(() => {
     if (isTabFilesVisible) {
@@ -89,6 +97,8 @@ const index = () => {
           createModal={createModal}
           handlePjtClick={handlePjtClick}
           user={user} // 사용자 데이터를 prop으로 전달
+          projects={projects}
+          setProjects={setProjects}
         />
       )}
 
@@ -108,6 +118,7 @@ const index = () => {
               toggleConsoleVisibility={toggleConsoleVisibility}
               setTabFilesVisible={setIsTabFilesVisible}
               isConsoleVisible={isConsoleVisible}
+              selectedProject={selectedProject ? selectedProject.id : null}
             />
             <FileExplorer />
           </div>

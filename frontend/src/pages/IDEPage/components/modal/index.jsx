@@ -27,9 +27,9 @@ const style = {
 
 
 
-export default function Index({onProjClick,modal,setModal,createModal, handlePjtClick}) {
+export default function Index({onProjClick,modal,setModal,createModal, handlePjtClick, projects,setProjects}) {
     const [open, setOpen] = React.useState(true);
-    const [projects,setProjects] =React.useState([])
+    // const [projects,setProjects] =React.useState([])
     const [editingId, setEditingId] = React.useState(null);
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
@@ -61,18 +61,6 @@ export default function Index({onProjClick,modal,setModal,createModal, handlePjt
         onProjClick(false)
     }
 
-    // const templateIcon = (template)=>{
-    //     switch(template){
-    //         case "Java" : 
-
-    //             return <BiLogoJava size='30' color='#0078F1' />
-    //         case 'Python' :
-    //             return<BiLogoPython size='30' color='#0093B0' />
-    //         case 'JavaScript':
-    //             return<BiLogoJavascript size='30' color='#967D00' />
-    //     }
-        
-    // }
 
 
 const renameProject = async () => {
@@ -108,7 +96,7 @@ const renameProject = async () => {
         } catch (error) {
             console.error('Error during project deletion:', error);
         }
-        console.log(projectId)
+
     };
   
     
@@ -166,7 +154,6 @@ const renameProject = async () => {
          } catch (error){
             console.error(error);  
         }
-    
     };
 
 
