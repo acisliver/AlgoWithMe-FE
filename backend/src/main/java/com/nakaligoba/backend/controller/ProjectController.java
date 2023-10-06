@@ -3,10 +3,11 @@ package com.nakaligoba.backend.controller;
 import com.nakaligoba.backend.service.ProjectService;
 import com.nakaligoba.backend.service.ProjectService.CreateProjectDto;
 import com.nakaligoba.backend.service.ProjectService.UpdateProjectDto;
+import com.nakaligoba.backend.service.ReadProjectService;
+import com.nakaligoba.backend.utils.JwtUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,8 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ReadProjectService readProjectService;
+    private final JwtUtils jwtUtils;
 
     @PostMapping
     public ResponseEntity<ProjectCreateResponse> createProject(
@@ -39,6 +42,14 @@ public class ProjectController {
     public ResponseEntity<List<ProjectListResponse>> getAllProjects() {
         List<ProjectListResponse> projects = projectService.getAllProjects();
         return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReadProjectDirectoryResponse> readProjectDirectory(@PathVariable Long id) {
+        String email = jwtUtils.getEmailFromSpringSession();
+        List<ReadProjectService.Node> node = readProjectService.readProjectDirectory(id, email);
+        ReadProjectDirectoryResponse readProjectDirectoryResponse = new ReadProjectDirectoryResponse(node);
+        return ResponseEntity.ok(readProjectDirectoryResponse);
     }
 
     @PutMapping("/{id}")
@@ -96,5 +107,10 @@ public class ProjectController {
     public static class CollaboratorResponse {
         private Long id;
         private String name;
+    }
+
+    @Data
+    public static class ReadProjectDirectoryResponse {
+        private final List<ReadProjectService.Node> data;
     }
 }

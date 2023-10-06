@@ -40,9 +40,10 @@ public class FileController {
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
         String username = authentication.getName();
+        String[] split = request.getName().split("\\.");
         CreateFileDto dto = CreateFileDto.builder()
-                .fileName(request.getName())
-                .ext(request.getExt())
+                .fileName(split[0])
+                .ext(split[1])
                 .userEmail("test@test.com")
                 .projectId(projectId)
                 .build();
@@ -60,9 +61,10 @@ public class FileController {
             @PathVariable Long fileId,
             @Valid @RequestBody FileRequest request
     ) {
+        String[] split = request.getName().split("\\.");
         FileDto fileDto = FileDto.builder()
-                .fileName(request.getName())
-                .ext(request.getExt())
+                .fileName(split[0])
+                .ext(split[1])
                 .content(request.getContent())
                 .build();
 
@@ -94,9 +96,6 @@ public class FileController {
     static class FileRequest {
         @NotBlank
         private final String name;
-        @NotBlank
-        private final String ext;
-        private final String storageFileId;
         private final String content;
     }
 
