@@ -14,7 +14,7 @@ import * as fileService from '../../../../service/fileService'
 
 
 
-export default function Explorer({ selectedTab,createModal,projectBtnHandler,projectStructure,selectedProject }) {
+export default function Explorer({ selectedTab,createModal,projectBtnHandler,projectStructure,selectedProject,setSelectedFileId }) {
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
   const [tree,setTree] = useState(projectStructure);
@@ -25,7 +25,7 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
   const [editingValue, setEditingValue] = useState(''); 
   const [editingType, setEditingType] = useState(null);
   const [editing, setEditing] = useState(false);
-
+  const [selectedPath, setSelectedPath] = useState("");
 
   useEffect(() => {
     if (projectStructure) {
@@ -315,8 +315,10 @@ const createFolder = (folderName) => {
         defaultExpandAll={true}
         switcherIcon={switcherIcon}
         draggable ={true}
-        onSelect={(selectedKeys) => {
+        onSelect={(selectedKeys, info) => {
         onFolderClick(selectedKeys[0]);
+        setSelectedPath(info.node.path)
+        setSelectedFileId(info.node.id)
        }}
         onRightClick={handlecontextMenu}
         titleRender={renderTreeNode}

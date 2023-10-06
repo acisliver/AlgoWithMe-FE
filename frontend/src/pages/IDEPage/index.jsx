@@ -23,6 +23,7 @@ const index = () => {
   const [editorWidth, setEditorWidth] = useState("100%");
   const [projects,setProjects] =React.useState([])
   const [selectedProject, setSelectedProject] =useState()
+  const [selectedFileId, setSelectedFileId] = useState("-1");
 
   const inviteClickHandler = () => {
     setOnInviteTap((prev) => {
@@ -119,11 +120,12 @@ console.log(selectedProject)
               setTabFilesVisible={setIsTabFilesVisible}
               isConsoleVisible={isConsoleVisible}
               selectedProject={selectedProject ? selectedProject.id : null}
+              setSelectedFileId={setSelectedFileId}
             />
             <FileExplorer />
           </div>
           <div className="flex flex-col w-full h-full">
-            <Editor editorHeight={editorHeight} editorWidth={editorWidth} />
+            <Editor editorHeight={editorHeight} editorWidth={editorWidth} selectedProject={selectedProject} selectedFileId={selectedFileId}/>
             <Console isVisible={isConsoleVisible} toggleConsoleVisibility={toggleConsoleVisibility} />
           </div>
         </div>
