@@ -28,7 +28,7 @@ public class ProjectController {
     public ResponseEntity<ProjectCreateResponse> createProject(
             @Valid @RequestBody ProjectCreateRequest request
     ) {
-        String email = "test@test.com";
+        String email = jwtUtils.getEmailFromSpringSession();
         CreateProjectDto dto = CreateProjectDto.builder()
                 .email(email)
                 .name(request.name)
@@ -71,7 +71,7 @@ public class ProjectController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        String email = "test@test.com";
+        String email = jwtUtils.getEmailFromSpringSession();
         projectService.deleteProject(id, email);
         return ResponseEntity.ok().build();
     }
