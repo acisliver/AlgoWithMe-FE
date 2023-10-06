@@ -2,11 +2,13 @@ version: '1'
 
 services:
   was:
-    image: rheodms123/web-ide
+    image: rheodms123/web-ide-prod
     container_name: was
     volumes:
       - code:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     networks:
