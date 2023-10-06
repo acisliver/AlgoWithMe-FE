@@ -30,6 +30,9 @@ public class ProjectEntity extends BaseEntity {
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<FileEntity> files = new ArrayList<>();
 
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    private List<MemberProjectEntity> collaborators = new ArrayList<>();
+
     @Builder
     public ProjectEntity(String name, String description, String storageId) {
         this.name = name;
