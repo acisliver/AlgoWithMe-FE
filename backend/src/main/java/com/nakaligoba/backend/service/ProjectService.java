@@ -67,19 +67,33 @@ public class ProjectService {
     }
 
     @Transactional
-    public List<ProjectListResponse> getAllProjects() {
-        List<ProjectEntity> entities = projectRepository.findAll();
-        return entities.stream()
-                .map(entity -> ProjectListResponse.builder()
-                        .id(entity.getId())
-                        .name(entity.getName())
-                        .description(entity.getDescription())
-                        .updatedAt(entity.getUpdatedAt())
-                        // Todo 협업자 관련 데이터 추후 수정필요
-                        .collaborators(Arrays.asList(
-                                CollaboratorResponse.builder().id(1L).name("사용자1").build(),
-                                CollaboratorResponse.builder().id(2L).name("사용자2").build()
-                        ))
+    public List<ProjectListResponse> getProjectsByEmail(String email) {
+        MemberEntity member = memberRepository.findByEmail(email);
+        List<MemberProjectEntity> memberProjects = memberProjectRepository.findByMember(member);
+
+        return memberProjects.stream()
+                .map(memberProject -> memberProjectToResponse(memberProject))
+                .collect(Collectors.toList());
+    }
+
+    private ProjectListResponse memberProjectToResponse(MemberProjectEntity memberProject) {
+        ProjectEntity project = memberProject.getProject();
+        List<CollaboratorResponse> collaborators = getCollaborators(project);
+        return ProjectListResponse.builder()
+                .id(project.getId())
+                .name(project.getName())
+                .description(project.getDescription())
+                .updatedAt(project.getUpdatedAt())
+                .collaborators(collaborators)
+                .build();
+    }
+
+    private List<CollaboratorResponse> getCollaborators(ProjectEntity project) {
+        return project.getCollaborators().stream()
+                .map(mp -> CollaboratorResponse.builder()
+                        .id(mp.getMember().getId())
+                        .name(mp.getMember().getName())
+                        .role(mp.getRole())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -107,6 +121,37 @@ public class ProjectService {
         project.changeProjectName(dto.getName());
         project.changeDescription(dto.getDescription());
         projectRepository.save(project);
+    }
+
+    @Transactional
+    public void inviteMemberToProject(Long projectId, String inviterEmail, String inviteeEmail) {
+        MemberEntity inviter = validateInviteByEmail(inviterEmail);
+        MemberEntity invitee = validateInviteByEmail(inviteeEmail);
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("프로젝트를 찾을 수 없습니다."));
+
+        Optional<MemberProjectEntity> ownerRelationOpt = memberProjectRepository
+                .findByProjectAndMemberAndRole(project, inviter, Role.OWNER);
+        if (!ownerRelationOpt.isPresent()) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        boolean isAlreadyMember = project.getCollaborators().stream()
+                .anyMatch(mp -> mp.getMember().equals(invitee));
+        if (isAlreadyMember) {
+            throw new IllegalArgumentException("이미 초대된 사용자입니다.");
+        }
+
+        MemberProjectEntity newMemberProject = new MemberProjectEntity(project, invitee, Role.COLLABORATOR);
+        memberProjectRepository.save(newMemberProject);
+    }
+
+    private MemberEntity validateInviteByEmail(String email) {
+        MemberEntity member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new IllegalArgumentException("입력 값을 잘못 입력하였습니다.");
+        }
+        return member;
     }
 
     @Data

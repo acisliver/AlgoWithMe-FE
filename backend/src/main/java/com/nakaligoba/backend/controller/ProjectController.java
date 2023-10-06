@@ -1,5 +1,6 @@
 package com.nakaligoba.backend.controller;
 
+import com.nakaligoba.backend.entity.Role;
 import com.nakaligoba.backend.service.ProjectService;
 import com.nakaligoba.backend.service.ProjectService.CreateProjectDto;
 import com.nakaligoba.backend.service.ProjectService.UpdateProjectDto;
@@ -40,7 +41,8 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectListResponse>> getAllProjects() {
-        List<ProjectListResponse> projects = projectService.getAllProjects();
+        String email = jwtUtils.getEmailFromSpringSession();
+        List<ProjectListResponse> projects = projectService.getProjectsByEmail(email);
         return ResponseEntity.ok(projects);
     }
 
@@ -69,11 +71,25 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         String email = jwtUtils.getEmailFromSpringSession();
         projectService.deleteProject(id, email);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/invite")
+    public ResponseEntity<?> inviteProject(
+            @PathVariable Long id,
+            @RequestBody InviteRequest request) {
+        String inviterEmail = jwtUtils.getEmailFromSpringSession();
+        String inviteeEmail = request.getEmail();
+        try {
+            projectService.inviteMemberToProject(id, inviterEmail, inviteeEmail);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @Data
@@ -110,6 +126,13 @@ public class ProjectController {
     public static class CollaboratorResponse {
         private Long id;
         private String name;
+        private Role role;
+    }
+
+    @Data
+    @Builder
+    public static class InviteRequest {
+        private String email;
     }
 
     @Data
