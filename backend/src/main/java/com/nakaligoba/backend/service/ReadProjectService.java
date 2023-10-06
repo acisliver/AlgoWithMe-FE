@@ -70,13 +70,15 @@ public class ReadProjectService {
             }
 
             String fileName = folderAndFileNames[folderAndFileNames.length - 1];
+            String ext = fileName.substring(fileName.lastIndexOf('.') + 1);
             Node fileNode = Node.builder()
                     .id(String.valueOf(file.getId()))
                     .key(String.valueOf(key++))
                     .path(getPath(folderAndFileNames, folderAndFileNames.length - 1))
                     .title(fileName)
                     .content("")
-                    .type("file")
+                    .type(ext)
+                    .children(new ArrayList<>())
                     .build();
 
             if (root == null) {
