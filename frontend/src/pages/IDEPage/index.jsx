@@ -5,6 +5,7 @@ import FileExplorer from "./components/file_explorer";
 import Header from "./components/header";
 import Sidebar from "./components/sidebar";
 import Modal from "./components/modal";
+import Invite from "./components/invite";
 
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../service/axiosInstance";
@@ -14,6 +15,13 @@ const index = () => {
   const [onModalClick, setOnModalClick] = useState(true);
   const [modal, setModal] = React.useState(false);
   const [projectStructure, setProjectStructure] = React.useState([]);
+  const [onInviteTap, setOnInviteTap] = useState(false);
+
+  const inviteClickHandler = () => {
+    setOnInviteTap((prev) => {
+      return !prev;
+    });
+  };
 
   const projectBtnHandler = (isOn) => {
     setOnModalClick(isOn);
@@ -71,7 +79,6 @@ const index = () => {
 
   return (
     <div>
-
       {onModalClick && (
         <Modal
           onProjClick={projectBtnHandler}
@@ -82,8 +89,14 @@ const index = () => {
           user={user} // 사용자 데이터를 prop으로 전달
         />
       )}
+
+
       <div className="flex flex-col h-screen relative">
-        <Header onProjClick={projectBtnHandler} />
+        <Header onProjClick={projectBtnHandler} onInviteClick={inviteClickHandler}/>
+        <div className="absolute top-[60px] right-[110px] z-[100]">
+          {onInviteTap && <Invite />}
+        </div>
+
         <div className="flex flex-row w-full h-full">
           <div className="flex flex-row">
             <Sidebar
@@ -102,6 +115,7 @@ const index = () => {
           </div>
         </div>
         <Chatroom className="absolute bottom-0 right-0 z-50" userName={"이곳에 유저 이름을 입력"}/>
+
       </div>
     </div>
   );
