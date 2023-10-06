@@ -20,7 +20,7 @@ public class ReadProjectService {
     private final MemberRepository memberRepository;
     private final MemberProjectRepository memberProjectRepository;
 
-    public List<Node> readProjectDirectory(Long id, String email) {
+    public DirectoryDto readProjectDirectory(Long id, String email) {
         MemberEntity member = memberRepository.findByEmail(email);
         List<FileEntity> files = memberProjectRepository.findByMemberAndProjectId(member, id)
                 .getProject()
@@ -87,7 +87,7 @@ public class ReadProjectService {
             root.children.add(fileNode);
         }
 
-        return Collections.unmodifiableList(nodes);
+        return new DirectoryDto(Collections.unmodifiableList(nodes), key);
     }
 
     private static String getPath(String[] split, int i) {
@@ -107,5 +107,11 @@ public class ReadProjectService {
         private String type;
         private String content;
         private List<Node> children;
+    }
+
+    @Data
+    public static class DirectoryDto {
+        private final List<Node> nodes;
+        private final Long lastKey;
     }
 }

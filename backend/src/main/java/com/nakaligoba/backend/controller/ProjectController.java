@@ -47,8 +47,10 @@ public class ProjectController {
     @GetMapping("/{id}")
     public ResponseEntity<ReadProjectDirectoryResponse> readProjectDirectory(@PathVariable Long id) {
         String email = jwtUtils.getEmailFromSpringSession();
-        List<ReadProjectService.Node> node = readProjectService.readProjectDirectory(id, email);
-        ReadProjectDirectoryResponse readProjectDirectoryResponse = new ReadProjectDirectoryResponse(node);
+        ReadProjectService.DirectoryDto dto = readProjectService.readProjectDirectory(id, email);
+        List<ReadProjectService.Node> node = dto.getNodes();
+        Long lastKey = dto.getLastKey();
+        ReadProjectDirectoryResponse readProjectDirectoryResponse = new ReadProjectDirectoryResponse(node, lastKey);
         return ResponseEntity.ok(readProjectDirectoryResponse);
     }
 
@@ -112,5 +114,6 @@ public class ProjectController {
     @Data
     public static class ReadProjectDirectoryResponse {
         private final List<ReadProjectService.Node> data;
+        private final Long lastKey;
     }
 }
