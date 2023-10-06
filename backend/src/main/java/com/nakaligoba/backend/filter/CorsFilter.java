@@ -21,7 +21,7 @@ import static org.springframework.http.HttpHeaders.*;
 public class CorsFilter implements Filter {
 
     private final List<String> ALLOW_ORIGINS = List.of(
-            "http://static-resource-web-ide.s3-website-us-east-1.amazonaws.com/",
+            "http://static-resource-web-ide.s3-website-us-east-1.amazonaws.com",
             "http://localhost:3000"
     );
 
