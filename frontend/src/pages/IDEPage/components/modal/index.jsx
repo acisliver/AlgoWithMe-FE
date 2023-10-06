@@ -24,34 +24,10 @@ const style = {
     borderRadius:'21px',
 
 };
-// const PROJECTS = [
-//     {
-//         id: 1,
-//         template : 'Java',
-//         name: "네카라쿠배 webIDE Project",
-//         date: "2023-09-25",
-//         collaborators: ["김지민", "장원영","안유진"]
-//     },
-//     {
-//         id: 2,
-//         template : 'Python',
-//         name: "New Project",
-//         date: "2023-08-20",
-//         collaborators: ["박지영", "김민수", "최하늘"]
-//     },
-//     {
-//         id: 3,
-//         template : 'JavaScript',
-//         name: "프로젝트 C",
-//         date: "2023-07-15",
-//         collaborators: ["정태영", "황미나"]
-//     }
-
-// ];
 
 
 
-export default function Index({onProjClick,modal,setModal,createModal}) {
+export default function Index({onProjClick,modal,setModal,createModal, handlePjtClick}) {
     const [open, setOpen] = React.useState(true);
     const [projects,setProjects] =React.useState([])
     const [editingId, setEditingId] = React.useState(null);
@@ -59,25 +35,25 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
     const [template, setTemplate] = React.useState('');
-    const[nextId,setNextId]= React.useState(1);
-
     
-    React.useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const response = await projectService.getProjects(); 
-                if (response.success) {
-                    setProjects(response.data);
-                } else {
-                    console.error(response.error); 
-                }
-            } catch (error) {
-                console.error(error); 
-            }
-        };
-
-        fetchProjects(); 
-    }, []); 
+ 
+    const fetchProjects = async () => {
+        try {
+          const response = await projectService.getProjects();
+          if (response.success) {
+            setProjects(response.data);
+          } else {
+            console.error(response.error);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      
+      React.useEffect(() => {
+        fetchProjects();
+      }, []); // add dependencies if needed
+      
 
 
     // const handleOpen = () => setOpen(true);
@@ -86,34 +62,52 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
         onProjClick(false)
     }
 
+    // const templateIcon = (template)=>{
+    //     switch(template){
+    //         case "Java" : 
 
-
-    const templateIcon = (template)=>{
-        switch(template){
-            case "Java" : 
-
-                return <BiLogoJava size='30' color='#0078F1' />
-            case 'Python' :
-                return<BiLogoPython size='30' color='#0093B0' />
-            case 'JavaScript':
-                return<BiLogoJavascript size='30' color='#967D00' />
-        }
+    //             return <BiLogoJava size='30' color='#0078F1' />
+    //         case 'Python' :
+    //             return<BiLogoPython size='30' color='#0093B0' />
+    //         case 'JavaScript':
+    //             return<BiLogoJavascript size='30' color='#967D00' />
+    //     }
         
+    // }
+
+    const renameProject = async (editingId) =>{
+        try {const response = await projectService.putProject(editingId);
+            if (response.success){
+                setProjects(projects=> projects.map(
+                project=> project.id === editingId? { ...project, name: pjtName } : project
+                ))
+                setEditingId(null)
+            }else {
+                console.error('Project update failed:', response);
+            }
+        } catch (error) {
+        console.error('Error during project update:', error);
+        }
     }
 
-    const renameProject = (editingId) =>{
-       setProjects(projects=> projects.map(
-        project=> project.id === editingId? { ...project, name: pjtName } : project
-       ))
-       setEditingId(null)
-     
-    }
-
-    const deleteProject = (projectId) => {
-        const deletedProjects = projects.filter(project => project.id !== projectId);
-        setProjects(deletedProjects);
-      };
-      
+   
+    
+    const deleteProject = async (projectId) => {
+        try {
+            const response = await projectService.deleteProject(projectId); 
+            if (response.success){ 
+                const deletedProjects = projects.filter(project => project.id !== projectId);
+                setProjects(deletedProjects);
+            } else {
+                console.error('Project deletion failed:', response);
+            }
+        } catch (error) {
+            console.error('Error during project deletion:', error);
+        }
+        console.log(projectId)
+    };
+  
+    
    
 
     const createClose = ()=>{
@@ -151,18 +145,14 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
 
     const createProject = async () =>{
         const newProject ={
-            // id : nextId,
             template: template,
             name: pjtName ,
             description : pjtTextAreaValue, 
-            // collaborators: []
-            // date: new Date().toISOString().slice(0, 10),
         }
         try {
             const response= await projectService.createProject(newProject);
-            if(response.sucess){
-                setProjects(prevProjects => [...prevProjects, newProject]);
-                // setNextId(prevId => prevId + 1);
+            if(response.success){
+                await fetchProjects(); //
                 setPjtName('');
                 setPjtTextAreaValue('');
                 // createClose();
@@ -198,12 +188,12 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                         </div>
                     </Typography>
                     <hr className='mt-3'/>
-                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px'}}>
+                    <Typography id="modal-modal-template" component="div"  sx={{ my: 2}} style={{height : '430px', overflow:'auto'}}>
                      {projects.map((project)=>(
                         <div key={project.id} className='flex  py-4 hover:bg-[#46425e] ' style={{paddingLeft:'30px',fontSize:'22px'}} >
-                            <div className='flex' >
+                            <div className='flex' onClick={editingId !== project.id ? () => handlePjtClick(project.id) : undefined} >
                                 <div style={{width:'70px'}}>
-                                    {templateIcon(project.template)}
+                                    {/* {templateIcon(project.template)} */}
                                 </div>
                                 <div style={{ width: '430px' }}>
                                     {editingId === project.id ? (
@@ -219,8 +209,11 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                         project.name
                                     )}
                                 </div>
-                                <span style={{width:'150px'}} className='flex justify-center' >{project.date}</span>
-                            <span className="flex" style={{width:'360px', marginLeft:'150px'}}>{project.collaborators.map(c => <ProfileBadge key={c} name={typeof c === 'string' ? c.slice(0, 1) : ''} />)}</span>
+                                <span style={{width:'150px'}} className='flex justify-center' >{project.updatedAt.slice(0,10)}</span>
+                                <span className="flex" style={{width:'300px', marginLeft:'150px'}}>{project.collaborators.map(c => (
+                                <ProfileBadge key={c.id} name={c.name.slice(-1)} />
+                                    ))}
+                                </span>
                             </div>
                                 <ModalMenu_Btn 
                                     editingId={project.id}  
@@ -250,8 +243,6 @@ export default function Index({onProjClick,modal,setModal,createModal}) {
                                         <div className=' bg-white text-black rounded-2xl p-4 flex flex-col' style={{width : '230px', height:'475px'}}>
                                             <button  className={`flex p-1 ${template === 'Java' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}  onClick={() => handleTemplateClick('Java')}>Java</button>
                                             <button className={`flex p-1 ${template === 'JavaScript' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('JavaScript')}>JavaScript</button>
-                                            <button  className={`flex p-1 ${template === 'C' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('C')}>C</button>
-                                            <button className={`flex p-1 ${template === 'C++' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('C++')}>C++</button>
                                             <button className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Python')}>Python</button>
                                         </div>
                                         <div style={{width:'1000px', color:'black', display:'flex', flexDirection:'column', alignItems:'center'}}>
