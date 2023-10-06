@@ -43,7 +43,7 @@ const index = (props) => {
   useEffect(() => {
     if (openChatroom) {
       const websocket = new WebSocket("ws://50.19.246.89:8080/ws/chat");
-      setWs(websocket);ㅂ
+      setWs(websocket);
 
       websocket.onmessage = (event) => {
         const receivedMessage = JSON.parse(event.data);
