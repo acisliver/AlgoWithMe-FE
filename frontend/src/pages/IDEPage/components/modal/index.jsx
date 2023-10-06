@@ -31,7 +31,6 @@ export default function Index({onProjClick,modal,setModal,createModal, handlePjt
     const [open, setOpen] = React.useState(true);
     const [projects,setProjects] =React.useState([])
     const [editingId, setEditingId] = React.useState(null);
-    // const [EditingName, setEditingName] = React.useState('');
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
     const [template, setTemplate] = React.useState('');
@@ -75,23 +74,28 @@ export default function Index({onProjClick,modal,setModal,createModal, handlePjt
         
     // }
 
-    const renameProject = async (editingId) =>{
-        try {const response = await projectService.putProject(editingId);
-            if (response.success){
-                setProjects(projects=> projects.map(
-                project=> project.id === editingId? { ...project, name: pjtName } : project
-                ))
-                setEditingId(null)
-            }else {
-                console.error('Project update failed:', response);
-            }
-        } catch (error) {
-        console.error('Error during project update:', error);
-        }
-    }
 
-   
-    
+const renameProject = async () => {
+    try {
+        const currentProject = projects.find(project => project.id === editingId);
+        const currentDescription = currentProject.description; 
+        const response = await projectService.putProject(editingId, pjtName, currentDescription);
+        
+        if (response.success) {
+            setProjects(projects => projects.map(
+                project => project.id === editingId ? { ...project, name: pjtName } : project
+            ))
+            setEditingId(null);
+        } else {
+            console.error('Project update failed:', response);
+        }
+    } catch (error) {
+        console.error('Error during project update:', error);
+    }
+}
+
+
+
     const deleteProject = async (projectId) => {
         try {
             const response = await projectService.deleteProject(projectId); 

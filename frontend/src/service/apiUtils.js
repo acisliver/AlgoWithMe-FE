@@ -6,6 +6,7 @@ async function call(apiUrl, method, requestData = {}) {
         const response = await axios({
             url: 'http://50.19.246.89:8080/api' + apiUrl,
             method,
+            headers : {'Authorization' : localStorage.getItem('token')},
             ...requestData
         });
         return handleResponse(response);
