@@ -100,11 +100,13 @@ public class FileService {
                 .findAny()
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 파일을 찾을 수 없습니다."));
 
-        String key = projectEntity.getStorageId() + fileEntity.getStorageFileId();
+        String key = fileEntity.getStorageFileId();
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(BUCKET_NAME)
                 .key(key)
                 .build();
+
+        log.info("Read File: {}", key);
 
         byte[] objectBytes = s3Client.getObject(getObjectRequest, ResponseTransformer.toBytes())
                 .asByteArray();
