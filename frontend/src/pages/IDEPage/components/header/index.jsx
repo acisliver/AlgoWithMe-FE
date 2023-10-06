@@ -6,7 +6,6 @@ import ProjectTitleButton from "./components/ProjectTitleButton";
 const index = (props) => {
   const [running, setRunning] = useState(false);
 
-
   const onExecute = async () => {
     setRunning((prev) => !prev);
 
@@ -37,7 +36,7 @@ const index = (props) => {
         <ProjectTitleButton onProjectClick={props.onProjClick}/>
       </div>
       <div className="flex w-1/3 justify-end gap-6">
-        <Button name="Invite" />
+        <Button name="Invite" onInviteClick={props.onInviteClick}/>
         <ExeButton running={running} toggleRunning={onExecute} />
       </div>
     </header>
