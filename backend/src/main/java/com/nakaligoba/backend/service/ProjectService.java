@@ -1,20 +1,24 @@
 package com.nakaligoba.backend.service;
 
 import com.github.dockerjava.api.exception.UnauthorizedException;
-import com.nakaligoba.backend.entity.MemberEntity;
-import com.nakaligoba.backend.entity.MemberProjectEntity;
-import com.nakaligoba.backend.entity.ProjectEntity;
-import com.nakaligoba.backend.entity.Role;
+import com.nakaligoba.backend.controller.ProjectController.CollaboratorResponse;
+import com.nakaligoba.backend.controller.ProjectController.ProjectCreateResponse;
+import com.nakaligoba.backend.controller.ProjectController.ProjectListResponse;
+import com.nakaligoba.backend.entity.*;
+import com.nakaligoba.backend.repository.FileRepository;
 import com.nakaligoba.backend.repository.MemberProjectRepository;
 import com.nakaligoba.backend.repository.MemberRepository;
 import com.nakaligoba.backend.repository.ProjectRepository;
-import com.nakaligoba.backend.controller.ProjectController.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -25,9 +29,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
+    private final static String BUCKET_NAME = "web-ide-projects";
+
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final MemberProjectRepository memberProjectRepository;
+    private final FileRepository fileRepository;
+    private final S3Client s3Client;
 
     @Transactional
     public ProjectCreateResponse create(CreateProjectDto dto) {
@@ -52,10 +60,47 @@ public class ProjectService {
         createdProject = projectRepository.save(createdProject);
         memberProjectRepository.save(memberProject);
 
+        createDefaultFile(dto.template, key, createdProject);
+
         log.info("Project(id: {}, name: {}) is created", createdProject.getId(), createdProject.getName());
         return ProjectCreateResponse.builder()
                 .id(createdProject.getId())
                 .build();
+    }
+
+    private void createDefaultFile(String template, String key, ProjectEntity createdProject) {
+        String ext = getExt(template);
+
+        s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(BUCKET_NAME)
+                        .key(key + "src/Main." + ext)
+                        .build(),
+                RequestBody.empty());
+
+        FileEntity file = FileEntity.builder()
+                .storageFileId(key + "src/Main." + ext)
+                .project(createdProject)
+                .build();
+        fileRepository.save(file);
+        log.info(file.toString());
+    }
+
+    private static String getExt(String template) {
+        String ext;
+        switch (template) {
+            case "Java":
+                ext = "java";
+                break;
+            case "Python":
+                ext = "py";
+                break;
+            case "JavaScript":
+                ext = "js";
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        return ext;
     }
 
     private boolean isDuplicatedName(MemberEntity member, String name) {
@@ -72,7 +117,7 @@ public class ProjectService {
         List<MemberProjectEntity> memberProjects = memberProjectRepository.findByMember(member);
 
         return memberProjects.stream()
-                .map(memberProject -> memberProjectToResponse(memberProject))
+                .map(this::memberProjectToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -81,6 +126,7 @@ public class ProjectService {
         List<CollaboratorResponse> collaborators = getCollaborators(project);
         return ProjectListResponse.builder()
                 .id(project.getId())
+                .me(memberProject.getMember().getName())
                 .name(project.getName())
                 .description(project.getDescription())
                 .updatedAt(project.getUpdatedAt())
@@ -160,6 +206,7 @@ public class ProjectService {
         private final String name;
         private final String description;
         private final String email;
+        private final String template;
     }
 
     @Data

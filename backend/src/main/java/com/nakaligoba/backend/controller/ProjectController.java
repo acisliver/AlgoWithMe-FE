@@ -34,6 +34,7 @@ public class ProjectController {
                 .email(email)
                 .name(request.name)
                 .description(request.description)
+                .template(request.template)
                 .build();
         ProjectCreateResponse response = projectService.create(dto);
         return ResponseEntity.ok(response);
@@ -115,6 +116,7 @@ public class ProjectController {
     @Builder
     public static class ProjectListResponse {
         private Long id;
+        private String me;
         private String name;
         private String description;
         private LocalDateTime updatedAt;
