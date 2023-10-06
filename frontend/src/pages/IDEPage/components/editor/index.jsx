@@ -5,26 +5,20 @@ import { javascript } from "@codemirror/lang-javascript";
 import { java } from "@codemirror/lang-java";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
+import { python } from '@codemirror/lang-python';
 import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
 import "./index.css";
 
 //탭
-const Index = () => {
+const Index = ({editorHeight, editorWidth}) => {
   const [activeTab, setActiveTab] = useState("Main.java");
   const [tabs, setTabs] = useState([
     {title: "Main.java", content: "console.log('Hello World!'); 111 abcd"},
-    {title: "index.jsx", content: "console.log('Hello World!'); 111 abcd"},
-    {title: "index.css", content: "222222" },
-    {title: "index1.jsx", content: "3" },
-    {title: "index2.jsx", content: "4" },
-    {title: "index3.jsx", content: "5" },
-    {title: "index4.jsx", content: "6" },
-    {title: "index5.jsx", content: "7" },
-    {title: "index6.jsx", content: "8" },
-    {title: "index7.jsx", content: "9" },
-    {title: "index8.jsx", content: "10" },
-    {title: "index9.jsx", content: "11111" },
-    {title: "index0.jsx", content: "1222222" },
+    {title: "index.js", content: "console.log('Hello World!'); 222 abcd"},
+    {title: "index.py", content: "console.log('Hello World!'); 333 abcd"},
+    {title: "index.html", content: "console.log('Hello World!'); 444 abcd"},
+    {title: "index.css", content: "console.log('Hello World!'); 555 abcd"},
+
   ]);
 
   const handleTabClick = (tabTitle) => {
@@ -43,6 +37,8 @@ const Index = () => {
       return javascript({ jsx: true });
     } else if (tabTitle.endsWith(".css")) {
       return css();
+    } else if (tabTitle.endsWith(".py")) {
+      return python();
     }
   };
   const activeExtension = getExtensionForTab(activeTab);
@@ -88,8 +84,10 @@ const Index = () => {
     setValue(val);
   }, [activeTab, tabs]);
 
+  const cmHeight = `${parseInt(editorHeight, 10) - 4}vh`;
+
   return (
-    <div id="inner_layout_top" className="bg-[#0E1525] overflow-hidden">
+    <div id="inner_layout_top" className="bg-[#0E1525]" style={{height: editorHeight, width: editorWidth}}>
       <ul
         ref={tabsRef}
         onWheel={handleWheel}
@@ -114,10 +112,15 @@ const Index = () => {
         <CodeMirror
           key={activeTab}
           value={value}
-          height="56vh;" // #inner_layout_top 가 60vh로 설정되어있기때문
+          height={cmHeight}
+          width={editorWidth}
           extensions={[activeExtension]}
           onChange={onChange}
           theme={tokyoNight} // 테마 
+          style={{
+            overflow: 'auto',
+            boxSizing: 'border-box',
+          }}
         />
       </div>
     </div>
