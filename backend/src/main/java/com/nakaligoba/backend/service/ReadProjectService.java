@@ -90,9 +90,15 @@ public class ReadProjectService {
         return new DirectoryDto(Collections.unmodifiableList(nodes), key);
     }
 
-    private static String getPath(String[] split, int i) {
+    private String getPath(String[] split, int i) {
         return Arrays.stream(split, 2, i + 1)
                 .collect(Collectors.joining("/"));
+    }
+
+    @Transactional
+    public String getUsername(String email) {
+        return memberRepository.findByEmail(email)
+                .getName();
     }
 
     @Data

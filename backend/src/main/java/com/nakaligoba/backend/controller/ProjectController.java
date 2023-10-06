@@ -48,9 +48,10 @@ public class ProjectController {
     public ResponseEntity<ReadProjectDirectoryResponse> readProjectDirectory(@PathVariable Long id) {
         String email = jwtUtils.getEmailFromSpringSession();
         ReadProjectService.DirectoryDto dto = readProjectService.readProjectDirectory(id, email);
+        String username = readProjectService.getUsername(email);
         List<ReadProjectService.Node> node = dto.getNodes();
         Long lastKey = dto.getLastKey();
-        ReadProjectDirectoryResponse readProjectDirectoryResponse = new ReadProjectDirectoryResponse(node, lastKey);
+        ReadProjectDirectoryResponse readProjectDirectoryResponse = new ReadProjectDirectoryResponse(node, lastKey, username);
         return ResponseEntity.ok(readProjectDirectoryResponse);
     }
 
@@ -115,5 +116,6 @@ public class ProjectController {
     public static class ReadProjectDirectoryResponse {
         private final List<ReadProjectService.Node> data;
         private final Long lastKey;
+        private final String username;
     }
 }
