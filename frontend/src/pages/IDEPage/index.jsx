@@ -17,6 +17,7 @@ const index = () => {
   const [projectStructure, setProjectStructure] = React.useState({data: []});
   const [onInviteTap, setOnInviteTap] = useState(false);
   const [user, setUser] = useState(null);
+  const [userDisplayName, setUserDisplayName] = useState("");
   const [editorHeight, setEditorHeight] = useState("60vh");
   const [isConsoleVisible, setIsConsoleVisible] = useState(true);
   const [isTabFilesVisible, setIsTabFilesVisible] = useState(false);
@@ -49,6 +50,7 @@ const index = () => {
         const selectedProject = projects.find(p => p.id === projectId);
       if (selectedProject) {
         setSelectedProject(selectedProject);
+        setUserDisplayName(selectedProject.me);
       }
       }else{
        console.error(response.error);
@@ -127,7 +129,7 @@ console.log(selectedProject)
             <Console isVisible={isConsoleVisible} toggleConsoleVisibility={toggleConsoleVisibility} />
           </div>
         </div>
-        <Chatroom className="absolute bottom-0 right-0 z-50" userName={"이곳에 유저 이름을 입력"}/>
+        <Chatroom className="absolute bottom-0 right-0 z-50" userName={userDisplayName}/>
 
       </div>
     </div>
