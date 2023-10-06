@@ -44,7 +44,7 @@ const Index = () => {
         <div>
             <p className="text-[#C2C8CC] text-center">No one else is here</p>
         </div>
-        <div className="flex items-center justify-evenly">
+        <div className="flex items-center justify-evenly border-t-[1px] border-[#8E9DC7] py-1">
             <div className="text-[#D3D3D3]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
                      className="bi bi-globe" viewBox="0 0 16 16">
