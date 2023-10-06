@@ -67,16 +67,21 @@ CREATE TABLE `files`
 );
 
 ALTER TABLE `member_projects`
-    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`);
+    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`)
+        ON DELETE CASCADE;
 
 ALTER TABLE `member_projects`
-    ADD FOREIGN KEY (`member_id`) REFERENCES members (`id`);
+    ADD FOREIGN KEY (`member_id`) REFERENCES members (`id`)
+        ON DELETE CASCADE;
 
 ALTER TABLE `chat_messages`
-    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`);
+    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`)
+        ON DELETE CASCADE;
 
 ALTER TABLE `chat_messages`
-    ADD FOREIGN KEY (`member_id`) REFERENCES members (`id`);
+    ADD FOREIGN KEY (`member_id`) REFERENCES members (`id`)
+        ON DELETE CASCADE;
 
 ALTER TABLE `files`
-    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`);
+    ADD FOREIGN KEY (`project_id`) REFERENCES projects (`id`)
+        ON DELETE CASCADE;
