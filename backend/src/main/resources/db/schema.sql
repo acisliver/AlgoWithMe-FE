@@ -1,4 +1,15 @@
-USE `web_ide`;
+USE
+`web_ide`;
+
+drop table if exists chat_messages CASCADE;
+
+drop table if exists files CASCADE;
+
+drop table if exists member_projects CASCADE;
+
+drop table if exists members CASCADE;
+
+drop table if exists projects CASCADE;
 
 CREATE TABLE `members`
 (
@@ -35,12 +46,13 @@ CREATE TABLE `member_projects`
 
 CREATE TABLE `chat_messages`
 (
-    `id`         BIGINT       NOT NULL AUTO_INCREMENT,
-    `message`    VARCHAR(255) NOT NULL,
-    `created_at` DATETIME     NOT NULL,
-    `updated_at` DATETIME     NOT NULL,
-    `project_id` BIGINT       NOT NULL,
-    `member_id`  BIGINT       NOT NULL,
+    `id`           BIGINT       NOT NULL AUTO_INCREMENT,
+    `message`      VARCHAR(255) NOT NULL,
+    `message_type` VARCHAR(255) NOT NULL,
+    `created_at`   DATETIME     NOT NULL,
+    `updated_at`   DATETIME     NOT NULL,
+    `project_id`   BIGINT       NOT NULL,
+    `member_id`    BIGINT       NOT NULL,
     PRIMARY KEY (`id`)
 );
 
