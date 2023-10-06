@@ -82,7 +82,7 @@ const index = () => {
             <Console isVisible={isConsoleVisible} toggleConsoleVisibility={toggleConsoleVisibility} />
           </div>
         </div>
-        <Chatroom className="absolute bottom-0 right-0 z-50" />
+        <Chatroom className="absolute bottom-0 right-0 z-50" userName={"이곳에 유저 이름을 입력"}/>
       </div>
     </div>
   );
