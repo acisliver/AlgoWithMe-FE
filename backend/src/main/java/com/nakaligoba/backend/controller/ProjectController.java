@@ -1,5 +1,7 @@
 package com.nakaligoba.backend.controller;
 
+import com.github.dockerjava.api.exception.NotFoundException;
+import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.nakaligoba.backend.entity.Role;
 import com.nakaligoba.backend.service.ProjectService;
 import com.nakaligoba.backend.service.ProjectService.CreateProjectDto;
@@ -9,6 +11,7 @@ import com.nakaligoba.backend.utils.JwtUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +93,22 @@ public class ProjectController {
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/members/{memberId}")
+    public ResponseEntity<?> removeProjectMember (
+            @PathVariable Long id,
+            @PathVariable Long memberId
+    ){
+        String email = jwtUtils.getEmailFromSpringSession();
+        try {
+            projectService.removeMemberToProject(id, memberId, email);
+            return ResponseEntity.ok().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

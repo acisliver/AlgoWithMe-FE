@@ -1,5 +1,6 @@
 package com.nakaligoba.backend.service;
 
+import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.nakaligoba.backend.controller.ProjectController.CollaboratorResponse;
 import com.nakaligoba.backend.controller.ProjectController.ProjectCreateResponse;
@@ -198,6 +199,26 @@ public class ProjectService {
             throw new IllegalArgumentException("입력 값을 잘못 입력하였습니다.");
         }
         return member;
+    }
+
+    @Transactional
+    public void removeMemberToProject(Long projectId, Long memberId, String email) {
+        MemberEntity member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+        if (!email.equals(member.getEmail())) {
+            throw new UnauthorizedException("접근 권한이 없습니다.");
+        }
+
+        MemberProjectEntity memberProject = memberProjectRepository.findByMemberAndProjectId(member, projectId);
+        if (memberProject == null) {
+            throw new NotFoundException("멤버의 프로젝트 정보를 찾을 수 없습니다.");
+        }
+        if (memberProject.getRole().equals(Role.OWNER)) {
+            throw new UnauthorizedException("접근 권한이 없습니다.");
+        }
+
+        memberProject.getProject().getCollaborators().remove(memberProject);
+        memberProjectRepository.delete(memberProject);
     }
 
     @Data
