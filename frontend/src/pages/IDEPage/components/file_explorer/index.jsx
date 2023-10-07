@@ -14,7 +14,7 @@ import * as fileService from '../../../../service/fileService'
 
 
 
-export default function Explorer({ selectedTab,createModal,projectBtnHandler,projectStructure,selectedProject }) {
+export default function Explorer({ selectedTab,projectStructure,handleInfoButtonClick,createId }) {
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
   const [tree,setTree] = useState(projectStructure);
@@ -102,8 +102,9 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
 
   const createFile =async (fileName) =>{
   const newFilePath = findPathByKey(tree,selectedFolderKey) + `/${fileName}`;
+  const projectId= selectedProject.id
   try{
-    const response = await fileService.createFile(selectedProject,newFilePath)
+    const response = await fileService.createFile(projectId,newFilePath)
     if(response.success){
       const fileType = determineFileType(fileName);
     const newFile = {
@@ -253,9 +254,10 @@ function findPathByKey(tree, targetKey) {
 
   const handleDelete = async () => {
     // const filePath = findPathByKey(tree, editingKey);
-    // console.log(filePath)
+    console.log(projectId)
+    const projectId= selectedProject.id
     try {
-      const response = await fileService.deleteFile(selectedProject, editingKey);
+      const response = await fileService.deleteFile(projectId, editingKey);
       if(response.success) {  
         setTree(prevTree => deleteNodeRecursive(prevTree, editingKey));
       } else {
@@ -332,7 +334,9 @@ function findPathByKey(tree, targetKey) {
   
 } else if (selectedTab === 'tabSetting') {
   return (
-   <TabSettings createModal={createModal} projectBtnHandler={projectBtnHandler}/>
+   <TabSettings
+    handleInfoButtonClick={handleInfoButtonClick}
+    createId={createId} />
   );
 }
 }
