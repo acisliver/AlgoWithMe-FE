@@ -144,10 +144,11 @@ const renameProject = async () => {
         try {
             const response= await projectService.createProject(newProject);
             if(response.success){
-                await fetchProjects(); //
-                setPjtName('');
-                setPjtTextAreaValue('');
+                await fetchProjects(); 
+                // setPjtName('');
+                // setPjtTextAreaValue('');
                 // createClose();
+                handlePjtClick(response.data.id);
             } else {
                 console.error(response.error)
             }          
