@@ -3,7 +3,7 @@ import Explorer from "../file_explorer/index";
 import ToggleButton from '@mui/material/ToggleButton';
 
 
-const Index = ({projectStructure, isConsoleVisible, toggleConsoleVisibility, setTabFilesVisible,selectedProject,handleInfoButtonClick, createId}) => {
+const Index = ({projectStructure, isConsoleVisible, toggleConsoleVisibility, setTabFilesVisible,selectedProject,handleInfoButtonClick,createId}) => {
   const [selectedTab, setSelectedTab] = useState('tabFiles');
 
   const tabHandleClick = (tabName) => {
@@ -79,7 +79,12 @@ const Index = ({projectStructure, isConsoleVisible, toggleConsoleVisibility, set
                     </ToggleButton>
                 </div>
 </div>
-<Explorer selectedTab={selectedTab} projectStructure={projectStructure}  selectedProject={selectedProject} handleInfoButtonClick={handleInfoButtonClick} createId={createId}/>
+<Explorer 
+  selectedTab={selectedTab} 
+  projectStructure={projectStructure}  
+  selectedProject={selectedProject} 
+  handleInfoButtonClick={handleInfoButtonClick} 
+  createId={createId}/>
 </>
 )
 }
