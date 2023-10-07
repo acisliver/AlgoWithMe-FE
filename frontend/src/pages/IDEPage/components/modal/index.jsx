@@ -27,7 +27,7 @@ const style = {
 
 
 
-export default function Index({onProjClick,modal,setModal, handlePjtClick, projects,setProjects,isEditing,selectedProject,handleCreateButtonClick,setCreateId}) {
+export default function Index({onProjClick,modal,setModal, handlePjtClick, projects,setProjects,isEditing,selectedProject,handleCreateButtonClick,setCreateId,projectBtnHandler,setSelectedProject}) {
     const [open, setOpen] = React.useState(true);
     const [editingId, setEditingId] = React.useState(null);
     const [pjtName, setPjtName] = React.useState('');
@@ -89,6 +89,23 @@ const renameProject = async () => {
         console.error('Error during project update:', error);
     }
 }
+
+const updateProject = async () => {
+    try {
+        const response = await projectService.putProject(selectedProject.id, pjtName, pjtTextAreaValue);
+        if (response.success) {
+            const updatedProject = { ...selectedProject, name: pjtName, description: pjtTextAreaValue };
+            setProjects(projects.map(
+                project => project.id === selectedProject.id ? updatedProject : project));
+                setSelectedProject(updatedProject);
+                projectBtnHandler(false)
+        } else {
+            console.error('Project update failed:', response);
+        }
+    } catch (error) {
+        console.error('Error during project update:', error);
+    }
+};
 
 
 
@@ -268,9 +285,15 @@ const renameProject = async () => {
                                     <button className='py-1 px-5 bg-white text-black rounded-2xl' onClick={handleBack}>
                                         Back
                                     </button>
-                                    <button  className='py-1 px-4 bg-white text-black rounded-2xl' onClick={createProject}>
-                                        Create
+                                    {isEditing ? (
+                                    <button className='py-1 px-4 bg-white text-black rounded-2xl' onClick={updateProject}>
+                                    Update
                                     </button>
+                                    ) : (
+                                    <button className='py-1 px-4 bg-white text-black rounded-2xl' onClick={createProject}>
+                                    Create
+                                    </button>
+                                    )}
                                     </div>
                                 </Box>
                             </Modal>
