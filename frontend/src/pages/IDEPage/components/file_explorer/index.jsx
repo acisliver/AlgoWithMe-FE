@@ -14,7 +14,7 @@ import * as fileService from '../../../../service/fileService'
 
 
 
-export default function Explorer({ selectedTab,createModal,projectBtnHandler,projectStructure,selectedProject }) {
+export default function Explorer({ selectedTab,projectStructure,handleInfoButtonClick,createId }) {
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
   const [tree,setTree] = useState(projectStructure);
@@ -88,7 +88,7 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
   //   const newFile = {
   //     key: `${lastKey}`,
   //     title: fileName,
-  //     type: fileType,
+  //     type: fileType
   //   };
   //   console.log("Creating file:", newFile); 
   //   if (!selectedFolderKey) {
@@ -100,80 +100,70 @@ export default function Explorer({ selectedTab,createModal,projectBtnHandler,pro
   //     setLastKey(prev=>prev+1)
   //   }
 
-  // const createFolder = (folderName) => {
-  //   const newFolder = {
-  //   key: lastKey,
-  //   title: folderName,
-  //   type: 'folder',
-  //   children: []
-  // };
-  // console.log("Creating folder:", newFolder); 
-  //   if (!selectedFolderKey) {
-  //   setTree(prevData => [...prevData, newFolder]);
-  // } else {
-  //   setTree(prevData => 
-  //     addNodeRecursive(prevData, selectedFolderKey, newFolder));
-  // }
-  //   toggleinput();
-  //   setLastKey(prev=>prev+1)
-// }
-
-// const findNodePath = (tree, targetKey, path = '') => {
-//   for (const node of tree) {
-//       const newPath = path ? `${path}/${node.title}` : node.title;
-//       if (node.key === targetKey) {
-//           return newPath;
-//       } else if (node.children && node.children.length > 0) {
-//           const childPath = findNodePath(node.children, targetKey, newPath);
-//           if (childPath) return childPath;
-//       }
-//   }
-//   return null;
-// };
-
-
-const createFile = async (fileName) => {
-  const fileType = determineFileType(fileName);
-  const newFile = {
-    key: `${lastKey}`,
-    title: fileName,
-    type: fileType,
-    // path: findNodePath(tree, selectedFolderKey),
-  };
-  console.log("Creating file:", newFile); 
-
-  try {
-    const response = await fileService.create(projectId, fileName, newFile.path);
-    if (response.success) {
-      // Upon successful creation, update the local state
-      setTree(prevData => addNodeRecursive(prevData, selectedFolderKey, newFile));
+  const createFile =async (fileName) =>{
+  const newFilePath = findPathByKey(tree,selectedFolderKey) + `/${fileName}`;
+  const projectId= selectedProject.id
+  try{
+    const response = await fileService.createFile(projectId,newFilePath)
+    if(response.success){
+      const fileType = determineFileType(fileName);
+    const newFile = {
+      key: `${lastKey}`,
+      title: fileName,
+      type: fileType
+    };
+    if (!selectedFolderKey) {
+      setTree(prevData => [...prevData, newFile]);
+  } else {
+    setTree(prevData => addNodeRecursive(prevData, selectedFolderKey, newFile));
+      }
       toggleinput();
-      setLastKey(lastKey + 1);
-    } else {
-      console.error(response.error);
+      setLastKey(prev=>prev+1)
+    }else{
+      console.error('Error creating file:', response.error);
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
   }
 };
 
 
-const createFolder = (folderName) => {
-  const newFolder = {
+function findPathByKey(tree, targetKey) {
+  let path = [];
+  function traverse(node, currentPath) {
+      if (node.key === targetKey) {
+          path = currentPath.concat(node.title);
+          return true; // 종료 조건
+      }
+      for (let child of node.children) {
+          if (traverse(child, currentPath.concat(node.title))) {
+              return true; // 경로가 발견되면 재귀 탐색 종료
+          }
+      }
+      return false; // 이 노드에서는 경로가 발견되지 않았음을 반환
+  }
+  traverse(tree[0], []);
+  return path.join('/');
+}
+    
+  const createFolder = (folderName) => {
+    const newFolder = {
     key: lastKey,
     title: folderName,
     type: 'folder',
-    children: [],
-    // Setting the path for the new folder
-    path: findNodePath(tree, selectedFolderKey) + `/${folderName}`
+    children: []
   };
   console.log("Creating folder:", newFolder); 
+    if (!selectedFolderKey) {
+    setTree(prevData => [...prevData, newFolder]);
+  } else {
+    setTree(prevData => 
+      addNodeRecursive(prevData, selectedFolderKey, newFolder));
+  }
+    toggleinput();
+    setLastKey(prev=>prev+1)
+}
 
-  // For folder, just updating the local state
-  setTree(prevData => addNodeRecursive(prevData, selectedFolderKey, newFolder));
-  toggleinput();
-  setLastKey(lastKey + 1);
-};
 
   const addNodeRecursive = (tree, targetKey, newNode) => {
     return tree.map(node => {
@@ -196,6 +186,7 @@ const createFolder = (folderName) => {
     }); 
   };
 
+  
   const treeSubmit =(e) =>{
     e.preventDefault();
     if (creatingItemType === 'file') {
@@ -260,9 +251,13 @@ const createFolder = (folderName) => {
   // }
 
 
+
   const handleDelete = async () => {
+    // const filePath = findPathByKey(tree, editingKey);
+    console.log(projectId)
+    const projectId= selectedProject.id
     try {
-      const response = await fileService.deleteFile(selectedProject, editingKey);
+      const response = await fileService.deleteFile(projectId, editingKey);
       if(response.success) {  
         setTree(prevTree => deleteNodeRecursive(prevTree, editingKey));
       } else {
@@ -289,6 +284,7 @@ const createFolder = (folderName) => {
   }
 
 
+  
   if(selectedTab === 'tabFiles'){
   return (
     <div style={{width : '440px', border: '0.5px solid black'}} className='bg-[#0E1525]  text-white '>
@@ -317,6 +313,7 @@ const createFolder = (folderName) => {
         draggable ={true}
         onSelect={(selectedKeys) => {
         onFolderClick(selectedKeys[0]);
+        // console.log(info.node.path);
        }}
         onRightClick={handlecontextMenu}
         titleRender={renderTreeNode}
@@ -337,7 +334,9 @@ const createFolder = (folderName) => {
   
 } else if (selectedTab === 'tabSetting') {
   return (
-   <TabSettings createModal={createModal} projectBtnHandler={projectBtnHandler}/>
+   <TabSettings
+    handleInfoButtonClick={handleInfoButtonClick}
+    createId={createId} />
   );
 }
 }
