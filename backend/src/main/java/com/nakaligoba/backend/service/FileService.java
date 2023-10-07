@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -130,8 +131,13 @@ public class FileService {
                 .filter(file -> Objects.equals(file.getId(), fileId))
                 .findAny()
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 파일을 찾을 수 없습니다."));
-
         fileRepository.delete(fileEntity);
+
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(fileEntity.getStorageFileId())
+                .build();
+        s3Client.deleteObject(deleteObjectRequest);
     }
 
     @Data

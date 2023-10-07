@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import com.nakaligoba.backend.service.FileService.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.Path;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -88,12 +90,20 @@ public class FileController {
     }
 
     @DeleteMapping("/{fileId}")
-    public ResponseEntity<Void> deleteFile(
+    public ResponseEntity<String> deleteFile(
             @PathVariable Long projectId,
             @PathVariable Long fileId
     ) {
-        fileService.deleteFile(projectId, fileId);
-        return ResponseEntity.ok().build();
+        try {
+            fileService.deleteFile(projectId, fileId);
+            return ResponseEntity.ok("파일이 삭제되었습니다.");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("파일 삭제 중 오류가 발생했습니다.");
+        }
     }
 
     @Data
