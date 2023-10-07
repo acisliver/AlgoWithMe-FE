@@ -14,7 +14,7 @@ import * as fileService from '../../../../service/fileService'
 
 
 
-export default function Explorer({ selectedTab,projectStructure,handleInfoButtonClick,createId }) {
+export default function Explorer({ selectedTab,projectStructure,handleInfoButtonClick,selectedProject,createId }) {
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
   const [tree,setTree] = useState(projectStructure);
@@ -43,7 +43,7 @@ export default function Explorer({ selectedTab,projectStructure,handleInfoButton
     if (fileName.endsWith('.css')) return 'css';
     if (fileName.endsWith('.html')) return 'html';
     if (fileName.endsWith('.java')) return 'java';
-    if (fileName.endsWith('.python')) return 'python';   
+    if (fileName.endsWith('.py')) return 'py';   
     return 'unknown'; 
   }
 
@@ -68,7 +68,7 @@ export default function Explorer({ selectedTab,projectStructure,handleInfoButton
           return<DiCss3 size='16' color='#0079F2' />
         case 'java' :
           return<BiLogoJava size='18' color='#0078F1' />
-        case 'python' :
+        case 'py' :
           return<BiLogoPython size='18' color='#0093B0' />
         default : 
         return  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#F5F9FC" className="w-4 h-4">
@@ -83,22 +83,6 @@ export default function Explorer({ selectedTab,projectStructure,handleInfoButton
     setSelectedFolderKey(key);
   }
  
-  // const createFile = (fileName) => {
-  //   const fileType = determineFileType(fileName);
-  //   const newFile = {
-  //     key: `${lastKey}`,
-  //     title: fileName,
-  //     type: fileType
-  //   };
-  //   console.log("Creating file:", newFile); 
-  //   if (!selectedFolderKey) {
-  //     setTree(prevData => [...prevData, newFile]);
-  // } else {
-  //   setTree(prevData => addNodeRecursive(prevData, selectedFolderKey, newFile));
-  //     }
-  //     toggleinput();
-  //     setLastKey(prev=>prev+1)
-  //   }
 
   const createFile =async (fileName) =>{
   const newFilePath = findPathByKey(tree,selectedFolderKey) + `/${fileName}`;
