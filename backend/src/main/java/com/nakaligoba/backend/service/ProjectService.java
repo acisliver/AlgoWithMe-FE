@@ -203,22 +203,25 @@ public class ProjectService {
 
     @Transactional
     public void removeMemberToProject(Long projectId, Long memberId, String email) {
-        MemberEntity member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
-        if (!email.equals(member.getEmail())) {
+        MemberEntity loggedInMember = memberRepository.findByEmail(email);
+
+        MemberProjectEntity loggedInMemberProject = memberProjectRepository
+                .findByMemberAndProjectId(loggedInMember, projectId);
+        if (loggedInMemberProject == null || !loggedInMemberProject.getRole().equals(Role.OWNER)) {
             throw new UnauthorizedException("접근 권한이 없습니다.");
         }
 
-        MemberProjectEntity memberProject = memberProjectRepository.findByMemberAndProjectId(member, projectId);
-        if (memberProject == null) {
+        MemberEntity memberToBeRemoved = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        MemberProjectEntity memberProjectToRemove = memberProjectRepository
+                .findByMemberAndProjectId(memberToBeRemoved, projectId);
+        if (memberProjectToRemove == null) {
             throw new NotFoundException("멤버의 프로젝트 정보를 찾을 수 없습니다.");
         }
-        if (memberProject.getRole().equals(Role.OWNER)) {
-            throw new UnauthorizedException("접근 권한이 없습니다.");
-        }
 
-        memberProject.getProject().getCollaborators().remove(memberProject);
-        memberProjectRepository.delete(memberProject);
+        memberProjectToRemove.getProject().getCollaborators().remove(memberProjectToRemove);
+        memberProjectRepository.delete(memberProjectToRemove);
     }
 
     @Data
