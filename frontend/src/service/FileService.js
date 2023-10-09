@@ -11,13 +11,13 @@ export const createFile = async (id, path) => {
 }
 
 export const getFile = async (projectId,fileId) => {
-    try {
-        const response = await apiUtils.read(`/v1/projects/${projectId}/files/${fileId}`);
-        return response;
-    } catch (error) {
-        console.error('Error getting file:', error);
-        return error;
-    }
+  try {
+      const response = await apiUtils.read(`/v1/projects/${projectId}/files/${fileId}`);
+      return response;
+  } catch (error) {
+      console.error('Error getting file:', error);
+      return error;
+  }
 }
 
 export const deleteFile = async (projectId,fileId,path) =>{
