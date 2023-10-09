@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, {useState, useRef, useEffect} from "react";
 import Tab from "./components/Tab";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -8,9 +8,10 @@ import { css } from "@codemirror/lang-css";
 import { python } from '@codemirror/lang-python';
 import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
 import "./index.css";
+import axios from "axios";
 
 //탭
-const Index = ({editorHeight, editorWidth}) => {
+const Index = ({editorHeight, editorWidth, selectedProject, selectedFileId}) => {
   const [activeTab, setActiveTab] = useState("Main.java");
   const [tabs, setTabs] = useState([
     {title: "Main.java", content: "console.log('Hello World!'); 111 abcd"},
@@ -20,6 +21,26 @@ const Index = ({editorHeight, editorWidth}) => {
     {title: "index.css", content: "console.log('Hello World!'); 555 abcd"},
 
   ]);
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      console.log("projectId", selectedProject.id)
+      console.log("fileId", selectedFileId)
+      const response = await axios.get(
+          `http://50.19.246.89:8080/api/v1/projects/${selectedProject.id}/files/${selectedFileId}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            }
+          }
+      )
+      console.log(response.data);
+      const title = `${response.data.fileName}.${response.data.ext}`;
+      setActiveTab(title);
+      setTabs([...tabs, { title: title, content: response.data.content }]);
+    }
+    fetchFile()
+  }, [selectedProject, selectedFileId]);
 
   const handleTabClick = (tabTitle) => {
     setActiveTab(tabTitle);
