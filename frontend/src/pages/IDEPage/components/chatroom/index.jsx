@@ -6,7 +6,6 @@ const index = (props) => {
   const [openChatroom, setOpenChatroom] = useState(false);
   const [messages, setMessages] = useState([]);
   const messageListRef = useRef(null); // Create a ref
-  const [displayName, setDisplayName] = useState();
 
   const clickHandler = () => setOpenChatroom((prev) => !prev);
 
@@ -91,7 +90,7 @@ const index = (props) => {
 
 // 메시지 전송 로직
   const enterHandler = (newMessage) => {
-    const messageForm = createMessageForm(newMessage, displayName, "MESSAGE"); // 함수를 사용하여 메시지 형식 생성
+    const messageForm = createMessageForm(newMessage, props.userName, "MESSAGE"); // 함수를 사용하여 메시지 형식 생성
     // setMessages((prev) => [...prev, messageForm]);
 
     if (ws && ws.readyState === WebSocket.OPEN) {
