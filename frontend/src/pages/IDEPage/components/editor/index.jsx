@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useCallback} from "react";
 import Tab from "./components/Tab";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -9,18 +9,81 @@ import { python } from '@codemirror/lang-python';
 import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
 import "./index.css";
 import axios from "axios";
+import { debounce } from 'lodash';
 
 //탭
 const Index = ({editorHeight, editorWidth, selectedProject, selectedFileId}) => {
-  const [activeTab, setActiveTab] = useState("Main.java");
-  const [tabs, setTabs] = useState([
-    {title: "Main.java", content: "console.log('Hello World!'); 111 abcd"},
-    {title: "index.js", content: "console.log('Hello World!'); 222 abcd"},
-    {title: "index.py", content: "console.log('Hello World!'); 333 abcd"},
-    {title: "index.html", content: "console.log('Hello World!'); 444 abcd"},
-    {title: "index.css", content: "console.log('Hello World!'); 555 abcd"},
-
+    const [tabs, setTabs] = useState([
+    {title: "네카라쿠배.java", content: "메인 화면입니다! 원하는 파일을 선택하여주세요."},
   ]);
+  const [activeTab, setActiveTab] = useState(tabs[0].title);
+
+  const [code, setCode] = useState(""); 
+
+  const saveCode = useCallback(async (codeToSave) => {
+    if (!codeToSave || !selectedFileId) {
+      console.error("Code to save or fileId is invalid. Skipping the save request.");
+      return;
+  }
+  
+    const payload = {
+        name: activeTab,
+        storageId: "",
+        content: codeToSave
+    };
+    try {
+        await axios.put(`http://50.19.246.89:8080/api/v1/projects/${selectedProject.id}/files/${selectedFileId}`,
+        payload, 
+        {
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+        });
+    } catch (error) {
+        console.error("Error saving code:", error);
+        if (error.response) {
+            console.error('Server response:', error.response.data);
+        }
+    }
+});
+
+const debouncedSaveCode = useCallback(debounce(saveCode, 2000), [saveCode]);
+
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      console.log("projectId", selectedProject.id)
+      console.log("fileId", selectedFileId)
+      console.log('Stored token:', localStorage.getItem("token"));
+
+      if (selectedFileId == null) {
+        console.error("fileId is null or undefined. Skipping the fetch request.");
+        return;
+      }
+  
+      try {
+        const response = await axios.get(
+          `http://50.19.246.89:8080/api/v1/projects/${selectedProject.id}/files/${selectedFileId}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            }
+          }
+        )
+        console.log(response.data);
+        const title = `${response.data.fileName}.${response.data.ext}`;
+        setActiveTab(title);
+        setTabs([...tabs, { title: title, content: response.data.content }]);
+        setCode(response.data.content);
+      } catch (error) {
+        console.error("Error fetching file:", error);
+        if (error.response) {
+            console.error('Server response:', error.response.data);
+        }
+      }
+    }
+    fetchFile()
+  }, [selectedProject, selectedFileId]);
 
   useEffect(() => {
     const fetchFile = async () => {
@@ -45,7 +108,7 @@ const Index = ({editorHeight, editorWidth, selectedProject, selectedFileId}) => 
   const handleTabClick = (tabTitle) => {
     setActiveTab(tabTitle);
     const newTabContent = tabs.find(tab => tab.title === tabTitle)?.content || "";
-    setValue(newTabContent);
+    setCode(newTabContent);
   };
 
   //탭 유형에 따른 에디터 설정
@@ -90,20 +153,6 @@ const Index = ({editorHeight, editorWidth, selectedProject, selectedFileId}) => 
     document.body.classList.remove("no-scroll");
   };
 
-  // CodeMirror 적용
-  const activeTabContent = tabs.find(tab => tab.title === activeTab)?.content || "";
-  const [value, setValue] = React.useState(activeTabContent);
-  
-  const onChange = React.useCallback((val, viewUpdate) => {
-    console.log("val:", val);
-    setTabs(tabs.map(tab => {
-      if (tab.title === activeTab) {
-        return { ...tab, content: val };
-      }
-      return tab;
-    }));
-    setValue(val);
-  }, [activeTab, tabs]);
 
   const cmHeight = `${parseInt(editorHeight, 10) - 4}vh`;
 
@@ -131,12 +180,28 @@ const Index = ({editorHeight, editorWidth, selectedProject, selectedFileId}) => 
       </ul>
       <div className="text-gray-400">
         <CodeMirror
-          key={activeTab}
-          value={value}
+          key={selectedFileId}
+          value={code}
           height={cmHeight}
           width={editorWidth}
           extensions={[activeExtension]}
-          onChange={onChange}
+          onChange={(editor, data) => {
+            console.log("Change data: ", data);
+            
+            if (editor && data && data.state && data.state.doc) {
+                try {
+                    const val = data.state.doc.text.join('\n');
+                    console.log("Code to Save: ", val);
+                    setCode(val);
+                    debouncedSaveCode(val);
+                } catch (error) {
+                    console.error("Error retrieving/saving code: ", error);
+                }
+            } else {
+                console.error("Editor instance or data is not available");
+            }
+        }}
+        
           theme={tokyoNight} // 테마 
           style={{
             overflow: 'auto',
