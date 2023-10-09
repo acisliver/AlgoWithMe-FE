@@ -10,11 +10,11 @@ import { useContextMenu } from "react-contexify";
 import TabSettings from "./TabSettings";
 import Form from "./Form";
 import * as fileService from "../../../../service/fileService";
+import { v4 as uuidv4 } from 'uuid';
 
 
 
-
-export default function Explorer({ selectedTab,projectStructure,createId,handleInfoButtonClick,createModal,projectBtnHandler,selectedProject,setSelectedFileId }) {
+export default function Explorer({ selectedTab,projectStructure,createId,handleInfoButtonClick,createModal,projectBtnHandler,selectedProject,setSelectedFileId,selectedFileId }) {
   const [showInput, setShowInput] = useState(false);
   const [value, setValue] = useState("");
   const [tree, setTree] = useState(projectStructure);
@@ -32,6 +32,10 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
       setTree(projectStructure);
     }
   }, [projectStructure]);
+
+  useEffect(() => {
+    console.log('selectedFileId changed:', selectedFileId);
+}, [selectedFileId]);
 
   const toggleinput = () => {
     setShowInput((prev) => !prev);
@@ -112,7 +116,8 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
 
 
   const createFile = async (fileName) => {
-    const newFilePath = findPathByKey(tree, selectedFolderKey) + `/${fileName}`;
+    // const newFilePath = findPathByKey(tree, selectedFolderKey) + `/${fileName}`;
+    const newFilePath = selectedPath + `/${fileName}`;
     const projectId = selectedProject.id
     try {
       const response = await fileService.createFile(projectId, newFilePath)
@@ -139,29 +144,39 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
   };
 
 
-  function findPathByKey(tree, targetKey) {
-    let path = [];
+//   function findPathByKey(tree, targetKey) {
+//     let path = [];
 
-    function traverse(node, currentPath) {
-      if (node.key === targetKey) {
-        path = currentPath.concat(node.title);
-        return true; // 종료 조건
-      }
-      for (let child of node.children) {
-        if (traverse(child, currentPath.concat(node.title))) {
-          return true; // 경로가 발견되면 재귀 탐색 종료
-        }
-      }
-      return false; // 이 노드에서는 경로가 발견되지 않았음을 반환
-    }
+//     function traverse(node, currentPath) {
+//       if (node.key === targetKey) {
+//         path = currentPath.concat(node.title);
+//         return true; // 종료 조건
+//       }
 
-    traverse(tree[0], []);
-    return path.join('/');
-  }
+//       if (!node.children) {
+//         return false; // node.children이 null 또는 undefined인 경우 반환
+//       }
+
+//       for (let child of node.children) {
+//         if (traverse(child, currentPath.concat(node.title))) {
+//           return true; // 경로가 발견되면 재귀 탐색 종료
+//         }
+//       }
+//       return false; // 이 노드에서는 경로가 발견되지 않았음을 반환
+//     }
+
+//     for (let rootNode of tree) {
+//       if (traverse(rootNode, [])) break; // targetKey와 일치하는 노드를 찾으면 반복 종료
+//     }
+    
+//     return path.join('/');
+// }
 
   const createFolder = (folderName) => {
     const newFolder = {
+      id: uuidv4(),
       key: lastKey,
+      path:selectedPath+ `/${folderName}`,
       title: folderName,
       type: 'folder',
       children: []
@@ -226,6 +241,7 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
     setEditingValue(node.title);
     setEditingType(node.type);
     setEditingKey(node.key);
+    setSelectedFileId(node.id);
   };
 
   const handleEditSubmit = (e) => {
@@ -279,11 +295,15 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
 
 
   const handleDelete = async () => {
-    // const filePath = findPathByKey(tree, editingKey);
-    console.log(projectId)
-    const projectId = selectedProject.id
+    if (!selectedProject || !selectedProject.id) {
+      console.error("selectedProject is not defined or does not have an id");
+      return;
+    }
+    
+    const projectId = selectedProject.id;
+    console.log("id",projectId);
     try {
-      const response = await fileService.deleteFile(projectId, editingKey);
+      const response = await fileService.deleteFile(projectId, selectedFileId);
       if (response.success) {
         setTree(prevTree => deleteNodeRecursive(prevTree, editingKey));
       } else {

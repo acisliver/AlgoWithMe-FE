@@ -145,9 +145,10 @@ const index = () => {
               toggleConsoleVisibility={toggleConsoleVisibility}
               setTabFilesVisible={setIsTabFilesVisible}
               isConsoleVisible={isConsoleVisible}
-              selectedProject={selectedProject ? selectedProject.id : null}
+              selectedProject={selectedProject}
               setSelectedFileId={setSelectedFileId}
               createId={createId}
+              selectedFileId={selectedFileId}
             />
             <FileExplorer />
           </div>
