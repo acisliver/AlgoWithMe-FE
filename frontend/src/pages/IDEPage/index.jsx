@@ -148,6 +148,7 @@ const index = () => {
               selectedProject={selectedProject}
               setSelectedFileId={setSelectedFileId}
               createId={createId}
+              selectedFileId={selectedFileId}
             />
             <FileExplorer />
           </div>

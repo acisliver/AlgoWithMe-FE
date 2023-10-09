@@ -20,9 +20,9 @@ export const getFile = async (projectId,fileId) => {
   }
 }
 
-export const deleteFile = async (projectId,fileId,path) =>{
+export const deleteFile = async (projectId,fileId) =>{
     try{
-        const response = await apiUtils.del(`/v1/projects/${projectId}/files/${fileId}`,{name:path});
+        const response = await apiUtils.del(`/v1/projects/${projectId}/files/${fileId}`);
         return response
     }catch(error){
         console.error('Error deleting file:', error);

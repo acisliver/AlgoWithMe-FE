@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-export default function Explorer({ selectedTab,projectStructure,createId,handleInfoButtonClick,createModal,projectBtnHandler,selectedProject,setSelectedFileId }) {
+export default function Explorer({ selectedTab,projectStructure,createId,handleInfoButtonClick,createModal,projectBtnHandler,selectedProject,setSelectedFileId,selectedFileId }) {
   const [showInput, setShowInput] = useState(false);
   const [value, setValue] = useState("");
   const [tree, setTree] = useState(projectStructure);
@@ -32,6 +32,10 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
       setTree(projectStructure);
     }
   }, [projectStructure]);
+
+  useEffect(() => {
+    console.log('selectedFileId changed:', selectedFileId);
+}, [selectedFileId]);
 
   const toggleinput = () => {
     setShowInput((prev) => !prev);
@@ -115,7 +119,6 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
     // const newFilePath = findPathByKey(tree, selectedFolderKey) + `/${fileName}`;
     const newFilePath = selectedPath + `/${fileName}`;
     const projectId = selectedProject.id
-    console.log("ee",newFilePath)
     try {
       const response = await fileService.createFile(projectId, newFilePath)
       if (response.success) {
@@ -238,6 +241,7 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
     setEditingValue(node.title);
     setEditingType(node.type);
     setEditingKey(node.key);
+    setSelectedFileId(node.id);
   };
 
   const handleEditSubmit = (e) => {
@@ -291,11 +295,15 @@ export default function Explorer({ selectedTab,projectStructure,createId,handleI
 
 
   const handleDelete = async () => {
-    // const filePath = findPathByKey(tree, editingKey);
-    console.log(projectId)
-    const projectId = selectedProject.id
+    if (!selectedProject || !selectedProject.id) {
+      console.error("selectedProject is not defined or does not have an id");
+      return;
+    }
+    
+    const projectId = selectedProject.id;
+    console.log("id",projectId);
     try {
-      const response = await fileService.deleteFile(projectId, editingKey);
+      const response = await fileService.deleteFile(projectId, selectedFileId);
       if (response.success) {
         setTree(prevTree => deleteNodeRecursive(prevTree, editingKey));
       } else {
