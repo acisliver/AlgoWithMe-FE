@@ -27,9 +27,8 @@ const style = {
 
 
 
-export default function Index({onProjClick,modal,setModal,createModal, handlePjtClick, projects,setProjects}) {
+export default function Index({onProjClick,modal,setModal, handlePjtClick, projects,setProjects,isEditing,selectedProject,handleCreateButtonClick,setCreateId}) {
     const [open, setOpen] = React.useState(true);
-    // const [projects,setProjects] =React.useState([])
     const [editingId, setEditingId] = React.useState(null);
     const [pjtName, setPjtName] = React.useState('');
     const [pjtTextAreaValue, setPjtTextAreaValue] = React.useState('');
@@ -53,9 +52,18 @@ export default function Index({onProjClick,modal,setModal,createModal, handlePjt
         fetchProjects();
       }, []); // add dependencies if needed
       
-
-
-    // const handleOpen = () => setOpen(true);
+    
+      React.useEffect(() => {
+        if (isEditing) {
+          setPjtName(selectedProject.name);
+          setPjtTextAreaValue(selectedProject.description);
+        } else {
+          setPjtName('');
+          setPjtTextAreaValue('');
+        }
+      }, [isEditing, selectedProject]);
+    
+    
     const handleClose = () => {
         setOpen((prev)=>!prev);
         onProjClick(false)
@@ -100,8 +108,6 @@ const renameProject = async () => {
     };
   
     
-   
-
     const createClose = ()=>{
         setModal(false);
           onProjClick(false)
@@ -144,10 +150,9 @@ const renameProject = async () => {
         try {
             const response= await projectService.createProject(newProject);
             if(response.success){
-                await fetchProjects(); //
-                setPjtName('');
-                setPjtTextAreaValue('');
-                // createClose();
+                await fetchProjects(); 
+                handlePjtClick(response.data.id);
+                setCreateId(response.data.id);
             } else {
                 console.error(response.error)
             }          
@@ -216,7 +221,7 @@ const renameProject = async () => {
                             ))}
                     </Typography>
                     <div className='w-full flex justify-center '>
-                    <button className='bg-white px-5 py-1 rounded-2xl' onClick={createModal} >
+                    <button className='bg-white px-5 py-1 rounded-2xl' onClick={()=>handleCreateButtonClick()} >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#000000" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -225,7 +230,7 @@ const renameProject = async () => {
                         <div>
                              <Modal
                                 open={modal}
-                                // onClose={createClose}
+                                onClose={createClose}
                                 aria-labelledby="modal-modal-title"
                                 aria-describedby="modal-modal-template"
                             >
@@ -234,7 +239,7 @@ const renameProject = async () => {
                                         <div className=' bg-white text-black rounded-2xl p-4 flex flex-col' style={{width : '230px', height:'475px'}}>
                                             <button  className={`flex p-1 ${template === 'Java' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}  onClick={() => handleTemplateClick('Java')}>Java</button>
                                             <button className={`flex p-1 ${template === 'JavaScript' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('JavaScript')}>JavaScript</button>
-                                            <button className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Python')}>Python</button>
+                                            <button className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Py')}>Python</button>
                                         </div>
                                         <div style={{width:'1000px', color:'black', display:'flex', flexDirection:'column', alignItems:'center'}}>
                                             <form onSubmit={nameSubmit} >
