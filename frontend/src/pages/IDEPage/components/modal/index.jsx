@@ -27,7 +27,7 @@ const style = {
 
 
 
-export default function Index({onProjClick,modal,setModal, handlePjtClick, projects,setProjects,isEditing,selectedProject,handleCreateButtonClick,setCreateId}) {
+export default function Index({onProjClick,modal,setModal, handlePjtClick, projects,setProjects,isEditing,selectedProject,handleCreateButtonClick,setCreateId,projectBtnHandler,setSelectedProject}) {
     const [open, setOpen] = React.useState(true);
     const [editingId, setEditingId] = React.useState(null);
     const [pjtName, setPjtName] = React.useState('');
@@ -89,6 +89,23 @@ const renameProject = async () => {
         console.error('Error during project update:', error);
     }
 }
+
+const updateProject = async () => {
+    try {
+        const response = await projectService.putProject(selectedProject.id, pjtName, pjtTextAreaValue);
+        if (response.success) {
+            const updatedProject = { ...selectedProject, name: pjtName, description: pjtTextAreaValue };
+            setProjects(projects.map(
+                project => project.id === selectedProject.id ? updatedProject : project));
+                setSelectedProject(updatedProject);
+                projectBtnHandler(false)
+        } else {
+            console.error('Project update failed:', response);
+        }
+    } catch (error) {
+        console.error('Error during project update:', error);
+    }
+};
 
 
 
@@ -237,9 +254,9 @@ const renameProject = async () => {
                                 <Box sx={style}>
                                     <Typography id="modal-modal-title" variant="h6" component="div" className='flex' style={{height:'500px'}} >
                                         <div className=' bg-white text-black rounded-2xl p-4 flex flex-col' style={{width : '230px', height:'475px'}}>
-                                            <button  className={`flex p-1 ${template === 'Java' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}  onClick={() => handleTemplateClick('Java')}>Java</button>
-                                            <button className={`flex p-1 ${template === 'JavaScript' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('JavaScript')}>JavaScript</button>
-                                            <button className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Py')}>Python</button>
+                                            <button disabled={isEditing} className={`flex p-1 ${template === 'Java' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}  onClick={() => handleTemplateClick('Java')}>Java</button>
+                                            <button disabled={isEditing} className={`flex p-1 ${template === 'JavaScript' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('JavaScript')}>JavaScript</button>
+                                            <button disabled={isEditing} className={`flex p-1 ${template === 'Python' ? 'bg-slate-200' : 'hover:bg-slate-200'}`}   onClick={() => handleTemplateClick('Py')}>Python</button>
                                         </div>
                                         <div style={{width:'1000px', color:'black', display:'flex', flexDirection:'column', alignItems:'center'}}>
                                             <form onSubmit={nameSubmit} >
@@ -268,9 +285,15 @@ const renameProject = async () => {
                                     <button className='py-1 px-5 bg-white text-black rounded-2xl' onClick={handleBack}>
                                         Back
                                     </button>
-                                    <button  className='py-1 px-4 bg-white text-black rounded-2xl' onClick={createProject}>
-                                        Create
+                                    {isEditing ? (
+                                    <button className='py-1 px-4 bg-white text-black rounded-2xl' onClick={updateProject}>
+                                    Update
                                     </button>
+                                    ) : (
+                                    <button className='py-1 px-4 bg-white text-black rounded-2xl' onClick={createProject}>
+                                    Create
+                                    </button>
+                                    )}
                                     </div>
                                 </Box>
                             </Modal>

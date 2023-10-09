@@ -120,6 +120,8 @@ const index = () => {
           selectedProject={selectedProject}
           handleCreateButtonClick={handleCreateButtonClick}
           setCreateId={setCreateId}
+          projectBtnHandler={projectBtnHandler}
+          setSelectedProject={setSelectedProject}
         />
       )}
 
