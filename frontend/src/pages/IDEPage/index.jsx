@@ -23,7 +23,9 @@ const index = () => {
   const [isTabFilesVisible, setIsTabFilesVisible] = useState(false);
   const [editorWidth, setEditorWidth] = useState("100%");
   const [projects,setProjects] =React.useState([])
-  const [selectedProject, setSelectedProject] =useState()
+  const [selectedProject, setSelectedProject] =useState({})
+  const [isEditing, setIsEditing] = useState(false);
+  const [createId,setCreateId] = useState()
 
   const inviteClickHandler = () => {
     setOnInviteTap((prev) => {
@@ -35,23 +37,21 @@ const index = () => {
   const projectBtnHandler = (isOn) => {
     setOnModalClick(isOn);
   };
+  useEffect(() => {
+    console.log('Projects:', projects);
+  }, [projects]);
 
-  const createModal = () => {
-    setModal((prev) => !prev);
-  };
   const handlePjtClick= async(projectId)=>{
     try {
       const response = await projectService.getProjectStructure(projectId);
       if(response.success){
-        setProjectStructure(response.data)
-        console.log(response.data)
-        projectBtnHandler(false)
-
         const selectedProject = projects.find(p => p.id === projectId);
-      if (selectedProject) {
+        setProjectStructure(response.data)
+        projectBtnHandler(false)
         setSelectedProject(selectedProject);
         setUserDisplayName(selectedProject.me);
       }
+
       }else{
        console.error(response.error);
       }  
@@ -59,7 +59,6 @@ const index = () => {
       console.error(error)
     }
 }
-console.log(selectedProject)
 
 
 
@@ -89,6 +88,22 @@ console.log(selectedProject)
     setEditorHeight(isConsoleVisible ? "96vh" : "60vh");
   };
 
+
+  const handleCreateButtonClick = () => {
+    setIsEditing(false);
+    setModal(true); //
+};
+
+  const handleInfoButtonClick = (id) => {
+    projectBtnHandler(true)
+    setIsEditing(true);
+    setModal(true);
+    if(!selectedProject){
+      const selectedProject = projects.find(p => p.id === id);
+      setSelectedProject(selectedProject);
+    }
+};
+
   return (
     <div>
       {onModalClick && (
@@ -96,11 +111,14 @@ console.log(selectedProject)
           onProjClick={projectBtnHandler}
           modal={modal}
           setModal={setModal}
-          createModal={createModal}
           handlePjtClick={handlePjtClick}
           user={user} // 사용자 데이터를 prop으로 전달
           projects={projects}
           setProjects={setProjects}
+          isEditing={isEditing}
+          selectedProject={selectedProject}
+          handleCreateButtonClick={handleCreateButtonClick}
+          setCreateId={setCreateId}
         />
       )}
 
@@ -114,13 +132,13 @@ console.log(selectedProject)
         <div className="flex flex-row w-full h-full">
           <div className="flex flex-row">
             <Sidebar
-              createModal={createModal}
-              projectBtnHandler={projectBtnHandler}
+              handleInfoButtonClick={handleInfoButtonClick}
               projectStructure={projectStructure && projectStructure.data ? projectStructure.data : {}}
               toggleConsoleVisibility={toggleConsoleVisibility}
               setTabFilesVisible={setIsTabFilesVisible}
               isConsoleVisible={isConsoleVisible}
-              selectedProject={selectedProject ? selectedProject.id : null}
+              selectedProject={selectedProject}
+              createId={createId}
             />
             <FileExplorer />
           </div>
