@@ -52,15 +52,13 @@ const index = () => {
         projectBtnHandler(false)
         setSelectedProject(selectedProject);
         setUserDisplayName(selectedProject.me);
-      }
-
       }else{
        console.error(response.error);
       }  
-    } catch (error) {
-      console.error(error)
+    }catch (error) {
+      console.error(error);
     }
-}
+  }
 
 
 

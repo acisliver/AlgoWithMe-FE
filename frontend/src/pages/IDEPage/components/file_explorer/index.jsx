@@ -14,7 +14,7 @@ import * as fileService from '../../../../service/fileService'
 
 
 
-export default function Explorer({ selectedTab,projectStructure,createId,handleInfoButtonClick,createModal,projectBtnHandler,projectStructure,selectedProject,setSelectedFileId }) {
+export default function Explorer({ selectedTab,projectStructure,createId,handleInfoButtonClick,createModal,projectBtnHandler,selectedProject,setSelectedFileId }) {
   const [showInput,setShowInput] = useState(false);
   const [value,setValue] =useState("");
   const [tree,setTree] = useState(projectStructure);
