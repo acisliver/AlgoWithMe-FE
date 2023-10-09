@@ -3,7 +3,7 @@ import "./index.css";
 import Tab from "./components/Tab";
 import CloseButton from "./components/CloseButton";
 
-const Index = ({ isVisible, toggleConsoleVisibility }) => {
+const Index = ({ isVisible, toggleConsoleVisibility, runResult }) => {
   const [activeTab, setActiveTab] = useState("terminal");
 
   const handleTabClick = (tab) => {
@@ -36,6 +36,11 @@ const Index = ({ isVisible, toggleConsoleVisibility }) => {
           />
           <CloseButton onClose={toggleConsoleVisibility} />
         </ul>
+        <div>
+          <ul>
+            {runResult.map(result => <li className="text-white">{result}</li>)}
+          </ul>
+        </div>
       </div>
     )
   );

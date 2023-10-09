@@ -27,6 +27,7 @@ const index = () => {
   const [selectedFileId, setSelectedFileId] = useState("-1");
   const [isEditing, setIsEditing] = useState(false);
   const [createId,setCreateId] = useState()
+  const [runResult, setRunResult] = useState([]);
 
 
   const inviteClickHandler = () => {
@@ -124,7 +125,12 @@ const index = () => {
 
 
       <div className="flex flex-col h-screen relative">
-        <Header onProjClick={projectBtnHandler} onInviteClick={inviteClickHandler}/>
+        <Header
+            onProjClick={projectBtnHandler}
+            onInviteClick={inviteClickHandler}
+            selectedFileId={selectedFileId}
+            selectedProject={selectedProject}
+            setRunResult={setRunResult}/>
         <div className="absolute top-[60px] right-[110px] z-[100]">
           {onInviteTap && <Invite />}
         </div>
@@ -145,7 +151,7 @@ const index = () => {
           </div>
           <div className="flex flex-col w-full h-full">
             <Editor editorHeight={editorHeight} editorWidth={editorWidth} selectedProject={selectedProject} selectedFileId={selectedFileId}/>
-            <Console isVisible={isConsoleVisible} toggleConsoleVisibility={toggleConsoleVisibility} />
+            <Console isVisible={isConsoleVisible} toggleConsoleVisibility={toggleConsoleVisibility} runResult={runResult}/>
           </div>
         </div>
         <Chatroom className="absolute bottom-0 right-0 z-50" userName={userDisplayName}/>

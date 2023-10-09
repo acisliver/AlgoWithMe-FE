@@ -20,12 +20,25 @@ export const getFile = async (projectId,fileId) => {
     }
 }
 
-export const deleteFile = async (projectId,filedId,path) =>{
+export const deleteFile = async (projectId,fileId,path) =>{
     try{
-        const response = await apiUtils.del(`v1/projects/${projectId}/files/${filedId}`,{name:path});
+        const response = await apiUtils.del(`/v1/projects/${projectId}/files/${fileId}`,{name:path});
         return response
     }catch(error){
         console.error('Error deleting file:', error);
         return error;
     }
-} 
+}
+
+export const runFile = async (projectId, fileId, path) => {
+    try {
+        const response = await apiUtils.read(`/v1/projects/${projectId}/files/${fileId}/run`);
+        if (!response.success) {
+            throw new Error(response.error);
+        }
+        return response;
+    } catch(error) {
+        console.error('Error running file:', error);
+        throw error;
+    }
+}
