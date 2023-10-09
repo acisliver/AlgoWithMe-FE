@@ -6,10 +6,9 @@ const index = (props) => {
   const [openChatroom, setOpenChatroom] = useState(false);
   const [messages, setMessages] = useState([]);
   const messageListRef = useRef(null); // Create a ref
-  const [displayName, setDisplayName] = useState(props.userName);
+  const [displayName, setDisplayName] = useState();
 
   const clickHandler = () => setOpenChatroom((prev) => !prev);
-  const nameChangeHandler = (event) => setDisplayName(event.target.value);
 
   // 웹소켓
   const [ws, setWs] = useState(null);
@@ -52,14 +51,14 @@ const index = (props) => {
       };
 
       websocket.onopen = () => {
-        const enterMessage = createMessageForm("User entered the chat", displayName, "ENTER");
+        const enterMessage = createMessageForm("User entered the chat", props.userName, "ENTER");
         websocket.send(JSON.stringify(enterMessage));
       };
 
       // beforeunload 이벤트 핸들러 추가
       const handleBeforeUnload = (event) => {
         if (websocket && websocket.readyState === WebSocket.OPEN) {
-          const exitMessage = createMessageForm("User left the chat", displayName, "EXIT");
+          const exitMessage = createMessageForm("User left the chat", props.userName, "EXIT");
           websocket.send(JSON.stringify(exitMessage));
         }
       };
@@ -71,7 +70,7 @@ const index = (props) => {
         window.removeEventListener('beforeunload', handleBeforeUnload);
 
         if (websocket && websocket.readyState === WebSocket.OPEN) {
-          const exitMessage = createMessageForm("User left the chat", displayName, "EXIT");
+          const exitMessage = createMessageForm("User left the chat", props.userName, "EXIT");
           websocket.send(JSON.stringify(exitMessage));
 
           const confirmClose = setTimeout(() => {
@@ -86,7 +85,7 @@ const index = (props) => {
         }
       };
     }
-  }, [openChatroom, displayName]);
+  }, [openChatroom, props.userName]);
 
 
 
@@ -113,19 +112,13 @@ const index = (props) => {
       {openChatroom && (
         <div className="absolute bottom-24 right-10 bg-[#2B3244] border-2 border-[#8E9DC7] rounded-xl p-2 w-[400px] h-[500px] shadow-md flex flex-col justify-between">
           <div className="flex-none text-center text-white">
-            <input
-                type="text"
-                placeholder="Display Name"
-                value={displayName}
-                className="text-white text-center py-1 px-2 bg-[#565F7A] rounded-xl flex-none border-2 border-[#8E9DC7]"
-                onChange={nameChangeHandler}
-            />
           </div>
           <div className="flex-grow overflow-auto" ref={messageListRef}>
             <ul className="message-list p-0 m-0">
               {messages.map((message, index) => (
                 <li className="list-none mb-2">
                   <Message
+                      key={index}
                     type={message.type}
                     sender={message.sender}
                     message={message.message}
