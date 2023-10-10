@@ -3,7 +3,7 @@ name: Merge Swagger Files
 on:
   push:
     paths:
-      - 'backend/src/main/resources/api/root.yaml'
+      - 'backend/src/main/resources/api/**'
 
 jobs:
   merge:
