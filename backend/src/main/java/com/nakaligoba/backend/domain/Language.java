@@ -1,37 +1,41 @@
 package com.nakaligoba.backend.domain;
 
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 public enum Language {
-    PYTHON_3("python3", "python:3.8", "3.8"),
+
+    JAVA("java", "javac %s.java && java %s", "java-runner"),
+    PYTHON3("py", "python %s.py", "python3-runner"),
+    NODE14("js", "node %s.js", "node14-runner")
     ;
 
-    private final String name;
-    private final String imageName;
-    private final String tag;
+    private final String ext;
+    private final String commandFormat;
+    private final String runner;
 
-    Language(String name, String imageName, String tag) {
-        this.name = name;
-        this.imageName = imageName;
-        this.tag = tag;
+    Language(String ext, String commandFormat, String runner) {
+        this.ext = ext;
+        this.commandFormat = commandFormat;
+        this.runner = runner;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getImageName() {
-        return imageName;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public static Optional<Language> findByName(String name) {
+    public static Language getByExt(String ext) {
         return Arrays.stream(Language.values())
-                .filter(l -> l.name.equals(name))
-                .findAny();
+                .filter((language) -> ext.equals(language.ext))
+                .findAny()
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+    public String getCommand(String filename) {
+        return commandFormat.replace("%s", filename);
+    }
+
+    public String getRunner() {
+        return runner;
+    }
+
+    public String getExt() {
+        return ext;
     }
 }

@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER_ID}
+    password: ${DB_USER_PW}
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: none

@@ -61,7 +61,7 @@ get:
                 id:
                   type: number
                   description: 프로젝트 식별자
-                storageId:
+                storage_id:
                   type: string
                   description: 스토리지 내 프로젝트 식별자
                 template:

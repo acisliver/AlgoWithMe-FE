@@ -17,30 +17,17 @@ public class FileEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "storage_file_id", nullable = false)
+    private String storageFileId;
 
-    @Column(name = "ext", nullable = false)
-    private String ext;
-
-    @Lob
-    @Column(name = "content", nullable = false)
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    private ProjectEntity project;
 
     @Builder
-    public FileEntity(String name, String ext, String content) {
-        this.name = name;
-        this.ext = ext;
-        this.content = content;
+    public FileEntity(String storageFileId, ProjectEntity project) {
+        this.storageFileId = storageFileId;
+        this.project = project;
     }
 
-    public void changeName(String newName) {
-        this.name = newName;
-    }
-    public void changeExt(String newExt) {
-        this.ext = newExt;
-    }
-    public void changeContent(String newContent) {
-        this.content = newContent;
-    }
 }
