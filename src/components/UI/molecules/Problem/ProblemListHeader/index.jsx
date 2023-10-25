@@ -10,6 +10,7 @@ export default function index() {
       <Text className='mr-[100px]'>문제제목</Text>
       <Text className='mr-[50px]'>정답률</Text>
       <Text className='mr-4'>난이도</Text>
+      <hr/>
     </div>
   )
 }
