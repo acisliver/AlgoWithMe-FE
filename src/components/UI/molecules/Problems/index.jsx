@@ -5,7 +5,7 @@ const index = () => {
   const [problem, setProblem] = useState(constant);
 
   return (
-    <div className="w-[600px] border">
+    <div className="w-[500px] m-4 bg-white rounded-xl max-h-screen overflow-y-auto">
       <div className="m-4">
         <h2>{`${problem.number}. ${problem.title}`}</h2>
       </div>
