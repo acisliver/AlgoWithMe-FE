@@ -1,19 +1,16 @@
 import React from 'react'
-import ProblemNumber from '../../../atoms/ProblemAttributes/ProblemNumber'
-import ProblemAcceptance from '../../../atoms/ProblemAttributes/ProblemAcceptance'
-import ProblemDifficulty from '../../../atoms/ProblemAttributes/ProblemDifficulty'
-import ProblemStatus from '../../../atoms/ProblemAttributes/ProblemStatus'
-import ProblemTitle from '../../../atoms/ProblemAttributes/ProblemTitle'
+import ProblemAttribute from '../../../atoms/ProblemAttributes'
 
 
-export default function index({problem}) {
+
+export default function index({problem,className}) {
   return (
-    <div>
-        <ProblemNumber number={problem.number} />
-        <ProblemStatus status={problem.status}/>
-        <ProblemTitle title={problem.title}/>
-        <ProblemAcceptance acceptance={problem.acceptance}/>
-        <ProblemDifficulty difficulty={problem.difficulty}/>
+    <div className={className}>
+        <ProblemAttribute className='my-2  bg-[#D9D9D9] ' attribute={problem.number} />
+        <ProblemAttribute className='my-2  bg-[#D9D9D9]' attribute={problem.status}/>
+        <ProblemAttribute className='my-2  bg-[#D9D9D9]' attribute={problem.title}/>
+        <ProblemAttribute className='my-2  bg-[#D9D9D9]' attribute={problem.acceptance}/>
+        <ProblemAttribute className='my-2  bg-[#D9D9D9]' attribute={problem.difficulty}/>
     </div>
   )
 }

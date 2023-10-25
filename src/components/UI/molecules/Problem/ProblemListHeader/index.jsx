@@ -1,5 +1,5 @@
 import React from 'react'
-import Text from '../../atoms/Text/Text'
+import Text from '../../../atoms/Text/Text'
 
 
 export default function index() {
