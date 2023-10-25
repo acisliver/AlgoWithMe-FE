@@ -1,16 +1,19 @@
 import './App.css';
 import React from 'react';
-import Button from './components/UI/atoms/Input/Button';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import AuthPage from './components/pages/AuthPage';
+import HomePage from './components/pages/HomePage';
+import IDEPage from './components/pages/IDEPage';
 
 function App() {
   return (
-    <div>
-      <p className="text-red-400">Red Text</p>
-      <p className="text-stone-900">Blue Text</p>
-      <Button className="text-red-400 ">button</Button>
-      <Button className="bg-red-600 hover:bg-red-700">button</Button>
-      <Button className="text-red-300">button</Button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/problems" element={<IDEPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
