@@ -8,7 +8,7 @@ function Input({
   className = '', // 추가적인 스타일 클래스
 }) {
   // Tailwind 기본 스타일을 적용하고, 외부에서 전달된 className으로 추가 스타일을 부여
-  const defaultClasses = 'border p-2 rounded';
+  const defaultClasses = 'w-full bg-gray-200 border border-gray-300 py-3 mt-2 mb-2 pl-2 shadow-lg hover:shadow-xl';
   const combinedClasses = `${defaultClasses} ${className}`;
 
   return (
