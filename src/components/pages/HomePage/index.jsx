@@ -6,12 +6,27 @@ import Footer from '../../UI/molecules/Navigation/Footer'
 
 
 const index = () => 
-<div>
+<div className='min-h-screen w-full flex flex-col'>
     <Navbar/>
-    <ProblemListHeader/>
-    <ProblemList/>
+
+    <div className='flex-grow flex flex-col  justify-center'>
+        <ProblemListHeader/>
+        <ProblemList/>
+    </div>
+     
     <Footer/>
-    
 </div>;
+// const index = () => 
+// <div className='min-h-screen w-full flex flex-col'>
+//     <Navbar/>
+
+//     <div className='flex-grow flex flex-col items-center justify-center'>
+//         <ProblemListHeader/>
+//         <ProblemList/>
+//     </div>
+     
+//     <Footer/>
+// </div>;
+
 
 export default index;
