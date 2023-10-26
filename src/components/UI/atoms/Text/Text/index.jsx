@@ -1,11 +1,7 @@
-import React from 'react';
+import React from 'react'
 
-function Text({ children, className = '' }) {
-  const defaultClasses = 'text-gray-600';
-
-  const combinedClasses = `${defaultClasses} ${className}`;
-
-  return <span className={combinedClasses}>{children}</span>;
+export default function index({children, className}) {
+  return (
+    <div className={className}>{children}</div>
+  )
 }
-
-export default Text;
