@@ -18,6 +18,6 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  rules: {},
+  rules: {"react/prop-types": 0},
   extends: ['airbnb', 'prettier'],
 };
